@@ -115,7 +115,8 @@ routing code in `00-rook/code/dispatch-routing/`.
 1. Before the regroup, take the numbers to Marcus, Nadia and Ravi, and get Ravi to confirm them.
 2. **Helen approved the routing fix and the pre-4.2 score restore for the four starved responders (24 Oct).**
    Helen also confirmed the ping wait goes back to 90s (in the repo's config).
-   Send `message-to-wen-and-marcus.md`, then get Wen's review and their call on hotfix or 4.3.
+   Wen reviewed it and cleared me to deploy (24 Oct). Deploy via Rook's release process using
+   `release-runbook-routing-fix.md`; this repo can't deploy.
    Send message 1 to Aunt Dot and Kip (`00-rook/feedback/handler-messages.md`); message 2 only once it's live.
 3. Take the roadmap decisions to Helen, then paste the wiki corrections in.
 4. Send the data requests. Ask Supply what "callout load" means in their scheduler.

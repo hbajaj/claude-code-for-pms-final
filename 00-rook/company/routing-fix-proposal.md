@@ -29,7 +29,7 @@ Status: **draft**. The code change is in `00-rook/code/dispatch-routing/`. It ha
 - Before 4.2 there were 25 misses and none came in a run, so the rule changes nothing about pre-4.2 behaviour.
 
 ## Before shipping
-- [ ] Wen reviews the code, and the penalty and decay values. The values are a PM's starting point, not tuned numbers.
+- [x] Wen reviewed the code and values, and cleared the change for deploy (24 Oct 2026). Release steps: `release-runbook-routing-fix.md`.
 - [ ] Wen confirms how scores are stored. The code keeps them in memory, keyed by responder name, so do they survive a deploy? The reset approach depends on this.
 - [ ] Full replay of the ranking with old vs new rules (Wen or Ravi). Expected result: the four starved responders keep getting pinged.
 - [ ] Ravi confirms the acceptance and ping numbers against the official weekly series.

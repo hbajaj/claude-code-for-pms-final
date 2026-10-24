@@ -1,6 +1,6 @@
 # Dispatch routing — changelog
 
-## Proposed for 4.3 (not yet reviewed by the staff engineer)
+## Approved, not yet deployed (product: 24 Oct 2026; staff engineer: 24 Oct 2026)
 - Missed pings no longer score as turn-downs. A miss is free unless it is
   the 3rd or later in a row; any answer resets the run.
 - Recent-acceptance scores drift back toward neutral (0.02 a day), so a
