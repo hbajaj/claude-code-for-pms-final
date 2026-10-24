@@ -1,7 +1,7 @@
 # Proposal: stop scoring missed pings as turn-downs
 
 From the Dispatch PM, for Wen Li (staff engineer) and Marcus Oyelaran (engineering manager), with Helen Achebe for the release decision.
-Status: **draft**. The code change is in `00-rook/code/dispatch-routing/` but has not been reviewed or run.
+Status: **draft**. The code change is in `00-rook/code/dispatch-routing/`. It has passed basic checks on the PM's machine (miss rule, decay, reset, and misses vs turn-downs in `dispatch`), but Wen hasn't reviewed it and it hasn't been run against real routing.
 
 ## The problem
 - When a ping goes unanswered, `offer.dispatch()` records it with `history.record_declined()`. That is the same −0.12 penalty as a responder saying no.

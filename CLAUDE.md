@@ -103,7 +103,7 @@ routing code in `00-rook/code/dispatch-routing/`.
 
 ### Drafts in this repo (all need review; none shared yet)
 - `00-rook/company/routing-fix-proposal.md`, with the code change in `00-rook/code/dispatch-routing/`
-  (misses scored separately, score decay, `history.reset()`; not run, not reviewed by Wen).
+  (misses scored separately, score decay, `history.reset()`; basic checks pass locally; not reviewed by Wen).
 - `00-rook/company/how-routing-works.md`: the missing routing description, for Wen to check.
 - `00-rook/company/q3-roadmap-update.md`: corrected roadmap, plus three decisions for Helen.
 - `00-rook/company/wiki-corrections.md`: paste-ready fixes for the Glossary, release notes, briefs and one-pager.
