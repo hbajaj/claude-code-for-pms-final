@@ -111,3 +111,9 @@ message-to-wen-and-marcus, q3-roadmap-update, wiki-corrections, dispatch-guardra
 2. Next open complaint: alerts easy to miss (step 4). Escalate Halloran's urgent-requisition queue to Supply as a safety issue.
 3. Call Linda Pruitt and Desmond Okafor (churn signals). Ask Wen and Marcus to investigate the callout drop.
 4. Take the roadmap decisions to Helen; send the data requests; ask Supply what "callout load" means.
+- Module 2: interviews and tickets barely overlap. The 4 interviewees filed 1 ticket between them; the 11 ticket filers weren't interviewed.
+  Shift and team handlers (handover notes, second logins, shared consoles) are missing from the research.
+- 147 tickets: 30 "quiet" (only 4 responders), 16 "gone before answer" (11 responders), 16 filters, 26 Supply. Only about 98 distinct texts,
+  because most non-routing issues appear exactly twice. Consolidated top 3: routing (verify fix), console trust (filters, then alerts), Supply safety.
+- Unserved callouts usually had a list of only 1–2 responders, and 27 of 49 since 4.2 involved a miss. That's why v2 adds the second round.
+- Open: Halfmoon's drop may be availability time zones (ticket 3050), not routing. Interview Linda Pruitt, Desmond Okafor and Teresa Alvarez next.
