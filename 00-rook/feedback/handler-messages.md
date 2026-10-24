@@ -2,7 +2,7 @@
 
 Drafts from the Dispatch PM, to be sent by the PM or by Nadia Hoffmann (Support lead). **Not sent.**
 Send message 1 now, and message 2 once the fix and score restore are live.
-**Both message 1s mention going back to 90 seconds.** Send them only after Helen confirms that change, or cut the phrase "and giving responders the full 90 seconds to answer again" before sending. Don't send message 2 early: the fix hasn't shipped.
+The 90-second change in both message 1s was confirmed by Helen on 24 Oct, so they're clear to send. Don't send message 2 early: the fix hasn't shipped.
 Log each one against draft tickets D-01 (Vesper) and D-05 (Meteor Mite) in `interview-tickets.md`.
 Keep other responders out of each message. Kip handles both Meteor Mite and The Gale, so both are named to him; nobody else is named.
 

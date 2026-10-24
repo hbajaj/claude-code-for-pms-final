@@ -18,7 +18,7 @@ Status: **draft**. The code change is in `00-rook/code/dispatch-routing/`. It ha
    Any answer, yes or no, resets the run.
 2. **Scores ease back toward neutral**, by 0.02 a day (`SCORE_DECAY_PER_DAY`). A responder at the floor gets back to neutral in about 25 days even if they aren't pinged.
 3. **One-off reset** (`history.reset()`): puts the responders hurt by 4.2 back to neutral when the fix ships.
-4. **Ping wait back to 90s** (`OFFER_TIMEOUT_SECONDS`). Decided by the Dispatch PM on 24 Oct; Helen still to confirm, since her approval covered items 1–3.
+4. **Ping wait back to 90s** (`OFFER_TIMEOUT_SECONDS`). Decided by the Dispatch PM and **confirmed by Helen, 24 Oct 2026**.
    At 90s, misses were 1–3% of pings; at 60s they're 13–22%. This removes the trigger for the miss spiral and the "gone before I could answer" third of tickets.
    Cost: up to 30s more per unanswered ping, and most callouts take 1–2 pings. Shipping it with the miss fix restores known behaviour.
    A 90s-first, 60s-after split can be tested later as its own change.
@@ -33,7 +33,7 @@ Status: **draft**. The code change is in `00-rook/code/dispatch-routing/`. It ha
 - [ ] Wen confirms how scores are stored. The code keeps them in memory, keyed by responder name, so do they survive a deploy? The reset approach depends on this.
 - [ ] Full replay of the ranking with old vs new rules (Wen or Ravi). Expected result: the four starved responders keep getting pinged.
 - [ ] Ravi confirms the acceptance and ping numbers against the official weekly series.
-- [x] Helen approved the fix and the score restore (24 Oct 2026). Wen and Marcus pick hotfix or 4.3. Marcus is told before `config.py` changes, as its header asks.
+- [x] Helen approved the fix, the score restore and the 90s ping wait (24 Oct 2026). Wen and Marcus pick hotfix or 4.3. Marcus is told before `config.py` changes, as its header asks.
 - [ ] Glossary, README and the routing description are updated to match.
 
 ## How we'll know it worked
