@@ -7,7 +7,7 @@ change anything in here without telling the engineering manager.
 # How long a callout offer stays on a responder's phone before we give
 # up on them and move to the next person on the list.
 # 4.2 cut this to 60; misses went from 1-3% of pings to 13-22%.
-# Proposed: back to 90, alongside the miss-scoring fix.
+# Back to 90 on 24 Oct 2026, alongside the miss-scoring fix.
 OFFER_TIMEOUT_SECONDS = 90
 
 # How much each input counts when we rank who to ask first. These are
@@ -21,7 +21,7 @@ ACCEPTANCE_CREDIT = 0.08
 DECLINE_PENALTY = 0.12               # a "no" from the responder
 
 # Missed pings (nobody answered in time) are not the same as a "no".
-# Before this change (proposed, not shipped) they cost the same as a
+# Until 24 Oct 2026 they cost the same as a
 # turn-down, which sank responders who
 # were simply slow to the phone after the 60s cut. Now a miss is free
 # unless it's part of a run: from the MISS_STREAK_LIMIT-th miss in a row,

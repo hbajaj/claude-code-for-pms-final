@@ -7,7 +7,7 @@ puts the offer on their phone, and waits for an answer.
 - `routing.py` — ranks the available responders for one callout.
 - `offer.py` — pushes the offer and waits; walks down the list.
 - `history.py` — the recent-acceptance score: taken, turned down and
-  missed each score differently (proposed for 4.3; see CHANGELOG).
+  missed each score differently (since 24 Oct 2026; see CHANGELOG).
 - `availability.py` — who's free, where they are, travel time.
 
 Everyone available is on the list, and this code decides the order.

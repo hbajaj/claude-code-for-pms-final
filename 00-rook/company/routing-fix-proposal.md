@@ -1,7 +1,7 @@
 # Proposal: stop scoring missed pings as turn-downs
 
 From the Dispatch PM, for Wen Li (staff engineer) and Marcus Oyelaran (engineering manager), with Helen Achebe for the release decision.
-Status: **draft**. The code change is in `00-rook/code/dispatch-routing/`. It has passed basic checks on the PM's machine (miss rule, decay, reset, and misses vs turn-downs in `dispatch`), but Wen hasn't reviewed it and it hasn't been run against real routing.
+Status: **shipped 24 Oct 2026.** Approved by Helen and reviewed by Wen. The four responders' scores were restored after deploy. Tracking: `post-deploy-checks.md`.
 
 ## The problem
 - When a ping goes unanswered, `offer.dispatch()` records it with `history.record_declined()`. That is the same −0.12 penalty as a responder saying no.
@@ -12,7 +12,7 @@ Status: **draft**. The code change is in `00-rook/code/dispatch-routing/`. It ha
 - Result, from the rook-database (29 Jun–6 Sep): Vesper, Farlight, The Undertow and Meteor Mite fell from 70–86 pings before 4.2 to 11–17 after, with 2–5 taken each.
   Callouts that nobody took rose from 4–12 a week to 14–17 for the three weeks after release, then fell to 7 in the week of 31 Aug. Support tickets went from 5–8 a week to 20–32. About ⅔ of them say "phone never goes off".
 
-## The change (in the repo, proposed for 4.3)
+## The change (shipped 24 Oct 2026)
 1. **Misses are scored separately** (`offer.py`, `history.record_missed`). A single miss costs nothing.
    The 3rd miss in a row, and each one after it, costs the turn-down penalty, so a responder whose phone is genuinely off still drops.
    Any answer, yes or no, resets the run.

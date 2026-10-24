@@ -2,7 +2,7 @@
 
 Written by the Dispatch PM from the code in `00-rook/code/dispatch-routing/`, the Glossary and the Rook Dispatch one-pager.
 Priya's handoff noted that no written description existed. **Wen Li (staff engineer) should review this before anyone relies on it.**
-Parts marked *proposed* describe the fix in `routing-fix-proposal.md`, which hasn't shipped.
+Describes routing as of the fix shipped on 24 Oct 2026 (`routing-fix-proposal.md`), with the earlier behaviour noted where it changed.
 
 ## The short version
 When a callout comes in, Dispatch takes everyone who is available in that area and puts them in order, best match first. It pings the top person's phone.
@@ -28,7 +28,7 @@ Each responder gets a score. Higher means asked sooner.
 A responder with none of the required tags still makes the list, just lower down. Nothing filters on capability.
 
 **3. The ping** (`offer.offer_to`)
-The callout goes to the top responder's phone. They have **60 seconds** to answer (90 before 4.2; *proposed: back to 90*).
+The callout goes to the top responder's phone. They have **90 seconds** to answer (4.2 cut it to 60 from 12 Aug; restored to 90 on 24 Oct).
 There are three outcomes: **taken**, **turned down**, or **missed** (no answer in time, so the offer is withdrawn from their phone).
 
 **4. Walking the list** (`offer.dispatch`)
@@ -40,10 +40,10 @@ There are three outcomes: **taken**, **turned down**, or **missed** (no answer i
 **5. The recent-acceptance score** (`history.py`)
 - Everyone starts at 0.5.
 - **Taken: +0.08. Turned down: −0.12.** The score always stays between 0 and 1.
-- **Missed, today:** −0.12, the same as a turn-down.
-  **Missed, proposed:** free, unless it's the 3rd or later miss in a row. Any answer resets the run.
-- **Recovery, today:** none. A score only rises when the responder takes a ping, and a low score means fewer pings. That's the trap that switched off four responders after 4.2.
-  **Recovery, proposed:** scores ease back toward 0.5 by 0.02 a day.
+- **Missed:** free, unless it's the 3rd or later miss in a row (−0.12 each). Any answer resets the run.
+  *Before 24 Oct, every miss cost −0.12, the same as a turn-down.*
+- **Recovery:** scores ease back toward 0.5 by 0.02 a day, even without pings.
+  *Before 24 Oct there was no recovery: a score only rose with a take, and a low score meant fewer pings. That trap switched off four responders after 4.2. Their scores were restored to pre-4.2 values on 24 Oct.*
 - Scores are kept in memory, keyed by responder name. Whether they survive a restart or deploy is unknown (ask Wen).
 
 ## Worked example
@@ -57,7 +57,7 @@ A callout needs one tag. Two responders are available and both have that tag.
 | B | 0.89 | 0.60×0.89 + 0.25×0.1 + 0.15 = **0.71** | 0.45×0.89 + 0.40×0.1 + 0.15 = **0.59** |
 
 A is still asked first, even though B is closer. 4.2 narrowed the gap, but a low acceptance score still outweighs being twice as close.
-If A takes it, B is never pinged, and B's score can't rise. Today that's how a responder gets stuck.
+If A takes it, B isn't pinged. Before 24 Oct, B's score then could never rise, which is how responders got stuck. Now it drifts back toward 0.5 over time.
 
 ## Things that change routing
 - **Config ships with the release.** Weights, ping wait and penalties live in `config.py`. Handlers can't adjust them, and changes go out on the monthly train.
@@ -72,4 +72,4 @@ If A takes it, B is never pinged, and B's score can't rise. Today that's how a r
 2. Do scores persist across restarts and deploys?
 3. Do overrides and bulk callouts change anyone's score?
 4. How is "region" defined, and can a responder 45+ minutes away still be in it?
-5. Are the proposed miss rule and decay values sensible?
+5. ~~Are the proposed miss rule and decay values sensible?~~ Reviewed by Wen; shipped 24 Oct.

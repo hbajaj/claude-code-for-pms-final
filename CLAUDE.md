@@ -109,7 +109,8 @@ routing code in `00-rook/code/dispatch-routing/`.
 - `00-rook/company/wiki-corrections.md`: paste-ready fixes for the Glossary, release notes, briefs and one-pager.
 - `00-rook/company/dispatch-guardrail-metrics.md`: weekly guardrails and eight data requests.
 - `00-rook/company/open-questions.md`: callout drop, Supply impact, filter bugs, local routing, ticket blind spot.
-- Note: the repo's routing code holds the *proposed* fix, not what's running in production.
+- **Routing fix shipped 24 Oct 2026** (misses scored separately, decay, 90s ping wait, four scores restored).
+  Two-week checks: `00-rook/company/post-deploy-checks.md`.
 
 ### My to-dos
 1. Before the regroup, take the numbers to Marcus, Nadia and Ravi, and get Ravi to confirm them.

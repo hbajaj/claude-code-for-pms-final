@@ -8,7 +8,7 @@ Each one gives the page, what it says now, and the replacement text. The routing
 ## Glossary
 
 **Missed** (currently: "Recorded separately from turned down, though both send the callout onward.")
-> Missed — Nobody answered before the ping wait ran out. The ping moves to the next responder. Recorded separately from turned down in the ping log, but until the routing fix ships it costs the responder's recent-acceptance score exactly the same as a turn-down. *Proposed for 4.3: a single miss costs nothing; only a run of three or more does.*
+> Missed — Nobody answered before the ping wait ran out. The ping moves to the next responder. Recorded separately from turned down. Since 24 Oct 2026 a single miss doesn't affect the responder's recent-acceptance score; only a run of three or more in a row does. (From 12 Aug to 24 Oct every miss counted as a turn-down.) The ping wait is 90 seconds.
 
 **Routing priority** (currently lists "current availability" as an input, and says turning down or missing "lowers the responder's place in the order for later callouts")
 > Routing priority — The score Dispatch uses to order available responders for a callout. Only responders marked available are considered; availability is a filter, not part of the score. The score is proximity (travel-time estimate, zero beyond 45 minutes) weighted 0.60, recent acceptance weighted 0.25, and capability match weighted 0.15 (weights since 4.2). Pings stop at the first yes, so a low place in the order can mean not being pinged at all. See "How Dispatch decides who gets pinged".

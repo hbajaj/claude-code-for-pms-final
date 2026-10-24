@@ -89,7 +89,7 @@ Nadia's ⅔ "phone never goes off" count undercounts the problem. Half the starv
 - Halloran calls Sgt. Bulwark "pretty steady", but Bulwark went from 0 missed pings before 4.2 to 7 after.
 - Marcus wrote on 28 Aug that the new PM "started Monday" (24 Aug). The Team directory, updated 2 Sep, doesn't list them. The Handler Phone App brief (8 Sep) has no named author.
 - Tickets run to 7 Sep, but callouts and pings stop on 6 Sep.
-- The repo's routing code now holds the **proposed** fix, not what's running. Where `how-routing-works.md` says "today", it means production.
+- The routing fix shipped on 24 Oct 2026, so the repo's routing code matches production again.
 
 ## Data caution
 Several support tickets have **word-for-word identical bodies** from different handlers. For example, 3064 and 3072, 3046 and 3115, and 3054 and 3109. Ask Nadia whether these come from a template, a form default, or duplicated records before counting tickets as independent reports.

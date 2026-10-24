@@ -1,8 +1,9 @@
 # Release runbook: routing fix, score restore, 90s ping wait
 
 **Approvals:** Helen Achebe (Director of Product), 24 Oct 2026, for all three changes. Wen Li (staff engineer) reviewed the change and cleared the Dispatch PM to deploy, 24 Oct 2026.
-**Code:** `00-rook/code/dispatch-routing/` in this repo (config.py, history.py, offer.py; CHANGELOG "Proposed for 4.3").
-**Status:** approved, **not yet deployed**. The repo is a working copy, not the deploy path. The release goes through Rook's normal Dispatch release process.
+**Code:** `00-rook/code/dispatch-routing/` in this repo (config.py, history.py, offer.py; see CHANGELOG).
+**Status:** **shipped 24 Oct 2026** by the Dispatch PM through Rook's release process. The four scores were restored after deploy.
+Post-deploy checks are tracked in `post-deploy-checks.md`.
 
 ## Before deploy (completed by the Dispatch PM, 24 Oct 2026)
 - [x] Marcus Oyelaran told that `config.py` is changing (its header asks for this).
