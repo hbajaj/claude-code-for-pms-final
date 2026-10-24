@@ -19,7 +19,8 @@ ACCEPTANCE_CREDIT = 0.08
 DECLINE_PENALTY = 0.12               # a "no" from the responder
 
 # Missed pings (nobody answered in time) are not the same as a "no".
-# Until 4.3 they cost the same as a turn-down, which sank responders who
+# Before this change (proposed, not shipped) they cost the same as a
+# turn-down, which sank responders who
 # were simply slow to the phone after the 60s cut. Now a miss is free
 # unless it's part of a run: from the MISS_STREAK_LIMIT-th miss in a row,
 # each further miss costs MISS_PENALTY. Any answer (yes or no) resets the run.

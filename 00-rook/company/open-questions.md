@@ -1,4 +1,4 @@
-# Dispatch open questions: callout drop, Supply impact, filter bugs
+# Dispatch open questions: callout drop, Supply impact, filter bugs, local routing, ticket blind spot
 
 From the Dispatch PM. Evidence is from the rook-database (29 Jun–6 Sep 2026), the wiki and the handler interviews.
 Each section gives the facts, what they suggest, and who can answer it.
@@ -53,6 +53,43 @@ Priya's handoff called the 4.2 filter tickets "cosmetic noise". Most are real, a
 3. Make the active-filter badge prominent, and add "clear all".
 
 Owner: Sofia Marino (console) with Marcus's team.
+
+## 4. 4.2 made routing *less* local where responders were starved
+
+**What we see**
+- 4.2 weighted proximity up so that nearby responders would be offered work first. Instead, the share of pings sent to a responder **outside the callout's area went from 17% to 39%** (186 of 1,085 before; 241 of 611 after).
+- In the starved responders' home areas, callouts taken by a local responder collapsed:
+
+| Area (local responder) | Taken locally, before 4.2 | Taken locally, after |
+| --- | --- | --- |
+| Old Town (Vesper) | 100% | 14% |
+| Uptown (Farlight) | 100% | 7% |
+| Harborside (The Undertow) | 100% | 10% |
+| Eastgate (Meteor Mite, The Gale) | 100% | 100%, because The Gale takes them all |
+| Midtown, Southport (not starved) | 100% | 100% |
+
+**What it suggests**
+This is the opposite of the outcome 4.2 was shipped for. Priya's handoff described the old problem as a nearby responder sitting unoffered while the system reached for someone far away. That's now happening in exactly these three areas. Once a local responder's acceptance score sinks, being closest doesn't bring them back up the order. It also puts responders on callouts further from home, likely slowing arrival. That's worth a question to Wen about how "region" is drawn.
+
+**Next step:** add "share of callouts taken by a local responder, per area" to the guardrail metrics. Include it in the replay for the routing fix, which should return these areas to mostly local.
+
+## 5. Tickets can't see half the problem
+
+**What we see**
+- Vesper (Aunt Dot), Meteor Mite and The Gale (Kip), and Sgt. Bulwark (Halloran) have **zero support tickets, ever**. Captain Vantage (Mr. Ambrose) has one.
+- Those are exactly the four handlers Sofia interviewed. Two of them look after starved responders and only raised it in the interviews.
+- Meanwhile the handlers filing the most tickets weren't interviewed: Desmond Okafor (The Undertow, 21 tickets) and Linda Pruitt (Farlight, 19).
+
+**What it suggests**
+Nadia's ⅔ "phone never goes off" count undercounts the problem. Half the starved responders never show up in tickets. Any ticket-based guardrail has the same blind spot, so the ping-based guardrails (starved responders, local share) must lead. The interview sample was also a console-redesign sample, not a 4.2 sample.
+
+**Next step:** Sofia or I talk to Desmond Okafor and Linda Pruitt. Nadia's team proactively contacts the handlers of any responder flagged as starved, rather than waiting for a ticket.
+
+## Smaller inconsistencies
+- Halloran calls Sgt. Bulwark "pretty steady", but Bulwark went from 0 missed pings before 4.2 to 7 after.
+- Marcus wrote on 28 Aug that the new PM "started Monday" (24 Aug). The Team directory, updated 2 Sep, doesn't list them. The Handler Phone App brief (8 Sep) has no named author.
+- Tickets run to 7 Sep, but callouts and pings stop on 6 Sep.
+- The repo's routing code now holds the **proposed** fix, not what's running. Where `how-routing-works.md` says "today", it means production.
 
 ## Data caution
 Several support tickets have **word-for-word identical bodies** from different handlers. For example, 3064 and 3072, 3046 and 3115, and 3054 and 3109. Ask Nadia whether these come from a template, a form default, or duplicated records before counting tickets as independent reports.

@@ -29,8 +29,7 @@ Sources: rook-wiki, the rook-database, `00-rook/company/notes/handoff-from-priya
 routing code in `00-rook/code/dispatch-routing/`.
 
 ### Company and products
-- Rook sells software to independent masked **responders** and to their **handlers** and
-  **quartermasters**. Pricing is per active responder. Monthly 4.x release train.
+- Rook sells software to independent masked **responders**, their **handlers** and **quartermasters**.
 - **Hard rule:** Rook never stores or works out a responder's legal identity (Security Policy 4.1).
 - **Dispatch** (mine) ranks available responders and pings them one at a time until one takes
   the callout. Handlers use the desktop console; responders use the phone app.
@@ -52,13 +51,11 @@ routing code in `00-rook/code/dispatch-routing/`.
   within the **ping wait**). Both no-answers send the callout on to the next responder.
 - **Acceptance rate** = pings taken ÷ pings sent (the headline metric). **Time-to-accept** = median
   seconds to taken. **Coverage gap** = nobody available had the required capability tags.
-- **Routing priority** = weighted score: proximity (travel time, zero beyond 45 min)
-  + recent-acceptance score + capability match. Availability is a filter, not a score input.
+- **Routing priority**: see `00-rook/company/how-routing-works.md`.
 
 ### Releases
-4.0 (7 Apr) brought the audit log. 4.1 (16 Jun) brought travel-time proximity and bulk callout.
-4.2 (12 Aug) moved proximity weight 0.45→0.60 and **acceptance weight 0.40→0.25** (the release notes omit this),
-cut the **ping wait 90s→60s**, and added persistent filters.
+4.0 (7 Apr): audit log. 4.1 (16 Jun): travel-time proximity, bulk callout. 4.2 (12 Aug): proximity weight
+0.45→0.60, **acceptance weight 0.40→0.25** (not in the release notes), **ping wait 90s→60s**, persistent filters.
 
 ### 4.2: what the data shows (database covers 29 Jun–6 Sep)
 - **Not seasonal.** Acceptance held at 75–78% every week through 3 Aug, which was the best week of the summer.
@@ -78,7 +75,10 @@ cut the **ping wait 90s→60s**, and added persistent filters.
   That matches Kip's "one card dead quiet, the other on fire" in his interview.
 - **This is the unexplained ⅔ of tickets** ("phone never goes off"). Tickets went from 5–8 a week to 20–32,
   and most are still open. The ⅓ "gone before I could answer" is the 60s wait. Dot, Ambrose and
-  Halloran all described it in interviews.
+  Halloran all described it in interviews. **Tickets undercount:** the handlers of Vesper and Meteor Mite
+  (Aunt Dot, Kip) have never filed one. They only spoke up in interviews.
+- **4.2 made routing *less* local, the opposite of its goal.** Pings to responders outside the callout's area went from 17%
+  to 39%. Callouts taken locally fell from 100% to 14% in Old Town, 7% in Uptown and 10% in Harborside.
 - **The recovery to 73% is misleading.** Acceptance is rising because the starved responders
   no longer get pinged, so their misses drop out of the rate.
   Callouts nobody took rose from 4–12 a week to 14–17 for three weeks, then fell to 7. They aren't tracked anywhere:
@@ -108,7 +108,8 @@ cut the **ping wait 90s→60s**, and added persistent filters.
 - `00-rook/company/q3-roadmap-update.md`: corrected roadmap, plus three decisions for Helen.
 - `00-rook/company/wiki-corrections.md`: paste-ready fixes for the Glossary, release notes, briefs and one-pager.
 - `00-rook/company/dispatch-guardrail-metrics.md`: weekly guardrails and eight data requests.
-- `00-rook/company/open-questions.md`: callout drop, Supply impact, filter bugs.
+- `00-rook/company/open-questions.md`: callout drop, Supply impact, filter bugs, local routing, ticket blind spot.
+- Note: the repo's routing code holds the *proposed* fix, not what's running in production.
 
 ### My to-dos
 1. Before the regroup, take the numbers to Marcus, Nadia and Ravi, and get Ravi to confirm them.

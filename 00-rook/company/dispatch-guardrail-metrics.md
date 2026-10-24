@@ -7,11 +7,14 @@ All numbers below are from the rook-database (29 Jun–6 Sep 2026) and still nee
 
 ## Weekly guardrails
 
+Ticket-based measures have a blind spot: the handlers of Vesper and Meteor Mite, two of the four starved responders, have never filed a ticket. Treat the ping-based guardrails as the leading signal.
+
 | Metric | Definition | Alert when | Baseline (before 4.2) | After 4.2 |
 | --- | --- | --- | --- | --- |
 | **Acceptance rate** (existing) | Pings taken ÷ pings sent | Weekly drop of 5+ points | 75–78% | 54%, 66%, 67%, 73% |
 | **Miss rate** | Pings missed ÷ pings sent | Above 5% | 1–3% (2–6 a week) | 13–22% (21–38 a week) |
 | **Starved responders** | Available responders whose weekly pings fell below half their own 6-week average | Any, for 2 weeks running | 0 | 4 every week from 17 Aug (Vesper, Farlight, The Undertow, Meteor Mite) |
+| **Local share, per area** | Callouts taken by a responder whose home area matches the callout's | Any area below 70% | 100% in every area checked | Old Town 14%, Uptown 7%, Harborside 10% |
 | **Unserved callouts** | Callouts pinged to the whole list with no yes | Above 10 a week | 4–12 | 14, 17, 16, 7 |
 | **"Phone never goes off" tickets** | Tickets about a responder going quiet (Nadia's tag; rough subject match below) | Any in a week | 0 | 0, 8, 13, 7 |
 | **"Gone before I could answer" tickets** | Tickets about a ping moving on mid-answer | Any in a week | 0 | 7, 3, 2, 1 |
