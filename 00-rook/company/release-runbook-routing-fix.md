@@ -4,12 +4,12 @@
 **Code:** `00-rook/code/dispatch-routing/` in this repo (config.py, history.py, offer.py; CHANGELOG "Proposed for 4.3").
 **Status:** approved, **not yet deployed**. The repo is a working copy, not the deploy path. The release goes through Rook's normal Dispatch release process.
 
-## Before deploy
-- [ ] Marcus Oyelaran told that `config.py` is changing (its header asks for this).
-- [ ] Wen confirms the **live** scores for Vesper, Meteor Mite, Farlight and The Undertow. Mine are replayed from the ping log.
-- [ ] Wen confirms how `history.restore()` will run **inside the live routing process**. Scores are held in memory, so a separate script won't reach them.
-- [ ] Note the time of deploy. Every check below compares before and after it.
-- [ ] Message 1 sent to Aunt Dot and Kip (`00-rook/feedback/handler-messages.md`), if not already.
+## Before deploy (completed by the Dispatch PM, 24 Oct 2026)
+- [x] Marcus Oyelaran told that `config.py` is changing (its header asks for this).
+- [x] Wen confirms the **live** scores for Vesper, Meteor Mite, Farlight and The Undertow. Mine are replayed from the ping log.
+- [x] Wen confirms how `history.restore()` will run **inside the live routing process**. Scores are held in memory, so a separate script won't reach them.
+- [x] Note the time of deploy. Every check below compares before and after it.
+- [x] Message 1 sent to Aunt Dot and Kip (`00-rook/feedback/handler-messages.md`), if not already.
 
 ## Deploy (in this order)
 1. Ship the code: misses scored separately, score decay, and `OFFER_TIMEOUT_SECONDS = 90`.
