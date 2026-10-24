@@ -53,79 +53,57 @@ routing code in `00-rook/code/dispatch-routing/`.
   seconds to taken. **Coverage gap** = nobody available had the required capability tags.
 - **Routing priority**: see `00-rook/company/how-routing-works.md`.
 
+### Callout journey, with handler complaints mapped (Sept interviews; n = how many of 4 handlers raised it)
+1. Callout comes in (handler or intake). No complaint; but volume fell about 20% on release day, unexplained.
+2. List who's available in the area. No complaint.
+3. Rank by distance + acceptance score + capability. Quiet weeks or lopsided work shows up here (2: Dot, Kip).
+4. Ping the top responder's phone. Alerts easy to miss or don't say who they're for (3: Dot, Ambrose, Kip). **Still open.**
+5. Wait for an answer (60s from 12 Aug, 90s from 24 Oct). Gone before he could answer (3: Dot, Ambrose, Halloran). Fixed 24 Oct.
+6. Taken, or move to the next responder. Stops at the first yes, so a low rank means no pings.
+7. Update the acceptance score. Root cause of quiet weeks: a miss counted as a no, with no recovery. Fixed 24 Oct.
+8. Handler watches the console. Text too small (2: Dot, Ambrose); too bright at night, coverage view not enough,
+   filters reset silently, tag legend buried (1 each); nothing explains why one card is quiet (Kip).
+9. Handler reports a problem. Feedback goes nowhere (3: Ambrose, Halloran, Kip).
+- Supply: catalog search needs the exact name (1); urgent requisitions stuck in one queue, a safety risk (1);
+  failure reports get no reply (1). All Halloran.
+
 ### Releases
 4.0 (7 Apr): audit log. 4.1 (16 Jun): travel-time proximity, bulk callout. 4.2 (12 Aug): proximity weight
 0.45→0.60, **acceptance weight 0.40→0.25** (not in the release notes), **ping wait 90s→60s**, persistent filters.
 
-### 4.2: what the data shows (database covers 29 Jun–6 Sep)
-- **Not seasonal.** Acceptance held at 75–78% every week through 3 Aug, which was the best week of the summer.
-  It fell to 54% in the release week, then went 66% → 67% → 73%. Missed pings jumped from 2–6 a week to 21–38.
-  No data before 29 Jun exists, so Priya's "August is always soft" claim can't be backed up.
-- **The mechanism, from the code.** `history.py` applies the same −0.12 penalty to a *miss* as to
-  a *turn-down*, but only +0.08 for a take. The score never recovers on its own (a TODO left since 2019),
-  and it has a floor of 0. The 60s ping wait created a burst of misses. Those misses sank some responders' scores,
-  so they ranked lower, got pinged less, and had no way to earn their score back.
-  That contradicts the Glossary, which says misses are recorded separately, and the README,
-  which says ranking "decides the order, not whether" someone is asked. Pings stop at the first yes,
-  so the bottom of the list is never reached.
-- **Four responders were effectively switched off.** Vesper went from 86 pings to 17, Farlight 75→11, The Undertow 75→14,
-  and Meteor Mite 70→14. Each has 2–5 takes since 12 Aug. All four had a run of misses on 12–16 Aug, then went quiet.
-  Corporal Ashgrove and Halfmoon roughly halved.
-  **Proximity can't explain it:** Meteor Mite and The Gale both cover Eastgate, and The Gale is still busy.
-  That matches Kip's "one card dead quiet, the other on fire" in his interview.
-- **This is the unexplained ⅔ of tickets** ("phone never goes off"). Tickets went from 5–8 a week to 20–32,
-  and most are still open. The ⅓ "gone before I could answer" is the 60s wait. Dot, Ambrose and
-  Halloran all described it in interviews. **Tickets undercount:** the handlers of Vesper and Meteor Mite
-  (Aunt Dot, Kip) have never filed one. They only spoke up in interviews.
-- **4.2 made routing *less* local, the opposite of its goal.** Pings to responders outside the callout's area went from 17%
-  to 39%. Callouts taken locally fell from 100% to 14% in Old Town, 7% in Uptown and 10% in Harborside.
-- **The recovery to 73% is misleading.** Acceptance is rising because the starved responders
-  no longer get pinged, so their misses drop out of the rate.
-  Callouts nobody took rose from 4–12 a week to 14–17 for three weeks, then fell to 7. They aren't tracked anywhere:
-  a coverage gap only counts capability mismatches.
-- **Answer to Marcus's 14 Aug question.** The config doesn't separate responders who turn jobs down. Lowering the acceptance
-  weight actually *helped* them. The harm comes from misses being penalised like turn-downs.
-- **Unexplained:** callout volume fell from about 20 a day to about 16 *on release day* and stayed down,
-  across every area. It fell most in Northfield and Westbury (−33%), home of the two "halved" responders.
-  Check intake and logging, and whether handlers are routing around the console.
-- **Possible Supply effect (unverified):** Supply schedules maintenance where callout load is low.
-  Starved responders now look low-load. "Maintenance booked on a bad day" tickets started 15 Aug.
+### 4.2: what the data shows (database covers 29 Jun–6 Sep only)
+- **Not seasonal.** Acceptance was 75–78% every week through 3 Aug, fell to 54% in release week, then 66→67→73%.
+  Missed pings went from 2–6 a week to 21–38. There's no earlier data to back Priya's "August is always soft".
+- **Mechanism (code):** a miss cost −0.12, the same as a turn-down (a take is +0.08); no recovery; floor 0. The 60s wait caused
+  misses, misses sank scores, low scores meant no pings, so there was no way back. This contradicted the Glossary and README.
+- **Four responders switched off:** Vesper 86→17 pings, Farlight 75→11, The Undertow 75→14, Meteor Mite 70→14. Replayed scores
+  hit 0, while everyone else sat at 0.72–1.0. Meteor Mite and The Gale share Eastgate, so distance doesn't explain it.
+- **Less local, the opposite of 4.2's goal:** out-of-area pings went from 17% to 39%. Callouts taken locally: Old Town 14%, Uptown 7%, Harborside 10%.
+- **Tickets:** 5–8 a week rose to 20–32; ⅔ "phone never goes off", ⅓ "gone before I could answer". They undercount: Dot and Kip
+  never file. Several bodies are word-for-word identical, so check with Nadia. The 73% recovery is misleading,
+  because starved responders' misses drop out of the rate.
+- **Unexplained:** callouts fell from about 20 a day to about 16 *on release day*, in every area, most in Northfield/Westbury (−33%).
+  That's where Corporal Ashgrove and Halfmoon lost half their pings despite top scores. Check intake and logging.
+- **Possible Supply effect (unverified):** Supply books maintenance where callout load looks low.
 
-### Other contradictions and gaps
-- **Roadmap is stale** (last reviewed 30 Jun; all owners still Priya). Availability Confidence is "Committed 4.2" but
-  didn't ship. The interviews were for a "console redesign" that isn't on the roadmap.
-- **Briefs are stale or misread.** Bulk Callout (shipped 4.1) and Audit Log (shipped 4.0) read as unstarted.
-  The Phone App brief misreads Aunt Dot. Approval Chains doesn't fix Halloran's slow single queue.
-- **Filter persistence isn't just noise.** Filters reset silently and the active-filter badge is easy to miss,
-  so a handler can watch the wrong list.
-- **Data caution:** several tickets have word-for-word identical bodies. Check with Nadia before counting them.
-- **Data we lack:** availability, capability tags, routing scores, answer times. Team directory doesn't list me.
+### Other gaps
+- Roadmap stale (owners all Priya; Availability Confidence dropped quietly). Briefs stale (Bulk Callout, Audit Log already shipped).
+- Filters reset silently. Billing listed Halfmoon and The Undertow twice. Handlers share logins. Bulk callout's effect on scores is unknown.
+- Data we lack: availability, capability tags, live scores, answer times. The Team directory doesn't list me.
 
-### Drafts in this repo (all need review; none shared yet)
-- `00-rook/company/routing-fix-proposal.md`, with the code change in `00-rook/code/dispatch-routing/`
-  (misses scored separately, score decay, `history.reset()`/`restore()`; reviewed by Wen and shipped 24 Oct).
-- `00-rook/company/how-routing-works.md`: the missing routing description, for Wen to check.
-- `00-rook/company/q3-roadmap-update.md`: corrected roadmap, plus three decisions for Helen.
-- `00-rook/company/wiki-corrections.md`: paste-ready fixes for the Glossary, release notes, briefs and one-pager.
-- `00-rook/company/dispatch-guardrail-metrics.md`: weekly guardrails and eight data requests.
-- `00-rook/company/open-questions.md`: callout drop, Supply impact, filter bugs, local routing, ticket blind spot.
-- **Routing fix shipped 24 Oct 2026** (misses scored separately, decay, 90s ping wait, four scores restored).
-  Two-week checks: `00-rook/company/post-deploy-checks.md`.
+### Shipped 24 Oct 2026, now in two-week monitoring
+- Approved by Helen and Wen. Misses scored separately (only 3+ in a row cost), scores recover 0.02 a day, ping wait back to 90s,
+  and four scores restored to pre-4.2 values (0.96/1.00/0.84/0.88), not 0.5, which would still have left them last.
+- Checks on 26 Oct, 31 Oct and 7 Nov need live data from Ravi (`post-deploy-checks.md`). Watch first for Eastgate flipping
+  to Meteor Mite (1.00 vs The Gale 0.96). At week 2: message 2 to Dot and Kip, paste the wiki corrections, close the roadmap item.
+
+### Files (in `00-rook/company/` unless noted)
+routing-fix-proposal, how-routing-works, release-runbook-routing-fix, post-deploy-checks, score-reset-request,
+message-to-wen-and-marcus, q3-roadmap-update, wiki-corrections, dispatch-guardrail-metrics, open-questions;
+`00-rook/feedback/`: interview-tickets (.md + .csv), handler-messages.
 
 ### My to-dos
-1. Before the regroup, take the numbers to Marcus, Nadia and Ravi, and get Ravi to confirm them.
-2. **Helen approved the routing fix and the pre-4.2 score restore for the four starved responders (24 Oct).**
-   Helen also confirmed the ping wait goes back to 90s (in the repo's config).
-   Wen reviewed it and cleared me to deploy (24 Oct). Deploy via Rook's release process using
-   `release-runbook-routing-fix.md`; this repo can't deploy.
-   Send message 1 to Aunt Dot and Kip (`00-rook/feedback/handler-messages.md`); message 2 only once it's live.
-3. Take the roadmap decisions to Helen, then paste the wiki corrections in.
-4. Send the data requests. Ask Supply what "callout load" means in their scheduler.
-- Replaying scores from the ping log (recursive SQL over `pings`) was the strongest evidence. Vesper, Meteor Mite, Farlight
-  and The Undertow hit 0; everyone else sits at 0.72–1.0. That's why we restored their pre-4.2 scores (0.96/1.00/0.84/0.88), not 0.5.
-- The interviewed handlers (Aunt Dot, Kip, Halloran, Ambrose) almost never file tickets. 14 draft tickets from the interviews are in
-  `00-rook/feedback/interview-tickets.md` (+ .csv for import), and handler messages are in `handler-messages.md`.
-- The rook-database stops on 6 Sep, so post-deploy checks (26 Oct, 31 Oct, 7 Nov) need live data from Ravi.
-  At week 2: message 2 to Dot and Kip, paste the wiki corrections, close the roadmap item.
-- Still open: Corporal Ashgrove and Halfmoon lost about half their pings but have top scores. That ties to the callout drop in
-  Northfield/Westbury, which starts on release day and is still unexplained.
+1. Get Ravi's live data and confirmation of the numbers. Run the post-deploy checks.
+2. Next open complaint: alerts easy to miss (step 4). Escalate Halloran's urgent-requisition queue to Supply as a safety issue.
+3. Call Linda Pruitt and Desmond Okafor (churn signals). Ask Wen and Marcus to investigate the callout drop.
+4. Take the roadmap decisions to Helen; send the data requests; ask Supply what "callout load" means.
