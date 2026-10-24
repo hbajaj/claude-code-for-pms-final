@@ -1,7 +1,8 @@
 # Messages to Aunt Dot and Kip
 
 Drafts from the Dispatch PM, to be sent by the PM or by Nadia Hoffmann (Support lead). **Not sent.**
-Send message 1 now, and message 2 once the fix and score restore are live. Don't send message 2 early: the fix hasn't shipped.
+Send message 1 now, and message 2 once the fix and score restore are live.
+**Both message 1s mention going back to 90 seconds.** Send them only after Helen confirms that change, or cut the phrase "and giving responders the full 90 seconds to answer again" before sending. Don't send message 2 early: the fix hasn't shipped.
 Log each one against draft tickets D-01 (Vesper) and D-05 (Meteor Mite) in `interview-tickets.md`.
 Keep other responders out of each message. Kip handles both Meteor Mite and The Gale, so both are named to him; nobody else is named.
 
@@ -19,7 +20,7 @@ Keep other responders out of each message. Kip handles both Meteor Mite and The 
 >
 > Our August update shortened how long an alert stays on a responder's phone, from 90 seconds to 60. When an alert ran out before he could answer, our system wrongly counted it as if he'd said no. A few of those in a row moved him down the list, and once he was lower down he wasn't being offered callouts often enough to move back up. That's why the weeks went so quiet.
 >
-> We're fixing how unanswered alerts are counted, putting Vesper back where he was before the update, and reviewing the 60-second limit. I'll write again when the fix is live. If anything else seems off in the meantime, reply here and it comes straight to me.
+> We're fixing how unanswered alerts are counted, putting Vesper back where he was before the update, and giving responders the full 90 seconds to answer again. I'll write again when the fix is live. If anything else seems off in the meantime, reply here and it comes straight to me.
 >
 > Thank you for noticing the pattern. Your interview is how we found this.
 >
@@ -31,7 +32,7 @@ Keep other responders out of each message. Kip handles both Meteor Mite and The 
 >
 > Hi Dot,
 >
-> The fix is live. Unanswered alerts no longer count against Vesper the way they did, and his standing is back to where it was before the August update. You should see his phone start going off again over the next few days. [Add the ping-wait decision here, e.g. "Alerts also stay on his phone for longer again."]
+> The fix is live. Unanswered alerts no longer count against Vesper the way they did, and his standing is back to where it was before the August update. You should see his phone start going off again over the next few days. Alerts also stay on his phone for 90 seconds again, so he has time to get downstairs.
 >
 > If it still seems quiet after a week, please let me know and I'll look at it personally.
 >
@@ -51,7 +52,7 @@ Keep other responders out of each message. Kip handles both Meteor Mite and The 
 >
 > Our August update shortened how long an alert stays on a responder's phone, from 90 seconds to 60. When an alert ran out, our system wrongly counted it as a no. Meteor Mite missed a few in the first days after the update and dropped down the list. Because The Gale covers the same area, every Eastgate callout then went to The Gale first, so one of them went quiet while the other got everything.
 >
-> We're fixing how unanswered alerts are counted, putting Meteor Mite back where they were before the update, and reviewing the 60-second limit. That should even out the work between the two. I'll write again when it's live. You can tell Meteor Mite they haven't been forgotten.
+> We're fixing how unanswered alerts are counted, putting Meteor Mite back where they were before the update, and giving responders the full 90 seconds to answer again. That should even out the work between the two. I'll write again when it's live. You can tell Meteor Mite they haven't been forgotten.
 >
 > [Name], Product Manager, Rook Dispatch
 

@@ -20,7 +20,7 @@ Sources: the Releases database, the 4.2 release page and comments, the dispatch-
 
 | Item | Product | Target | Status | Owner | Notes |
 | --- | --- | --- | --- | --- | --- |
-| 4.2 follow-up: routing fairness after the ping-wait cut | Dispatch | Hotfix or 4.3 (engineering to decide) | **Approved by Helen, 24 Oct** | Dispatch PM with Wen Li | Approved: misses scored separately, score decay, and the four starved responders (Vesper, Farlight, The Undertow, Meteor Mite) restored to their pre-4.2 scores. Not yet decided: the 60s ping wait. See routing-fix-proposal.md and score-reset-request.md. |
+| 4.2 follow-up: routing fairness after the ping-wait cut | Dispatch | Hotfix or 4.3 (engineering to decide) | **Approved by Helen, 24 Oct** | Dispatch PM with Wen Li | Approved: misses scored separately, score decay, and the four starved responders (Vesper, Farlight, The Undertow, Meteor Mite) restored to their pre-4.2 scores. Ping wait back to 90s: decided by the Dispatch PM, Helen to confirm. See routing-fix-proposal.md and score-reset-request.md. |
 
 ## Shipped, for reference (from the Releases database)
 

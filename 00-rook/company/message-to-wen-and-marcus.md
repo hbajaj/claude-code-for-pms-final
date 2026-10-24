@@ -20,7 +20,7 @@ Draft from the Dispatch PM. **Not sent.** Send by Slack or email, with the repo 
 > **What I need from you:**
 > - Wen: a review of the code and values. Please also confirm the live scores before we restore, since mine are replayed from the ping log, and tell me whether scores survive a deploy, because that decides how the restore runs.
 > - Both: hotfix or 4.3? The fix has to land before or with the restore, or one bad evening puts them back at zero.
-> - Separately, and not yet approved: do we revisit the 60s ping wait? It drives the other third of tickets ("gone before I could answer").
+> - One more change, which I've decided and am confirming with Helen: **ping wait back to 90s**. At 60s, misses went from 1–3% of pings to 13–22%. That's the trigger for the spiral and the other third of tickets ("gone before I could answer"). It's one value in `config.py`, and I'd like it to ship with the fix so we're back to known behaviour. Marcus, flagging per the note at the top of config.py.
 >
 > Details are in `00-rook/company/`: routing-fix-proposal.md, score-reset-request.md, how-routing-works.md (please check it, it's my first attempt at writing routing down) and dispatch-guardrail-metrics.md.
 >

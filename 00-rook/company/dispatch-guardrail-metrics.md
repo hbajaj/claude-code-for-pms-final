@@ -18,7 +18,7 @@ Ticket-based measures have a blind spot: the handlers of Vesper and Meteor Mite,
 | **Unserved callouts** | Callouts pinged to the whole list with no yes | Above 10 a week | 4–12 | 14, 17, 16, 7 |
 | **"Phone never goes off" tickets** | Tickets about a responder going quiet (Nadia's tag; rough subject match below) | Any in a week | 0 | 0, 8, 13, 7 |
 | **"Gone before I could answer" tickets** | Tickets about a ping moving on mid-answer | Any in a week | 0 | 7, 3, 2, 1 |
-| **Time-to-accept** (existing, can't compute yet) | Median seconds from ping to taken | Above 45s while the ping wait is 60s | — | needs answer times, see data requests |
+| **Time-to-accept** (existing, can't compute yet) | Median seconds from ping to taken | Above half the ping wait (45s at 90s) | — | needs answer times, see data requests |
 
 The starved-responder alert would have fired in the week of 17 Aug, a week before tickets peaked. The acceptance rate alone wouldn't have.
 

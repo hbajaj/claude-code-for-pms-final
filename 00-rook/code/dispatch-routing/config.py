@@ -6,7 +6,9 @@ change anything in here without telling the engineering manager.
 
 # How long a callout offer stays on a responder's phone before we give
 # up on them and move to the next person on the list.
-OFFER_TIMEOUT_SECONDS = 60           # was 90 until 4.2
+# 4.2 cut this to 60; misses went from 1-3% of pings to 13-22%.
+# Proposed: back to 90, alongside the miss-scoring fix.
+OFFER_TIMEOUT_SECONDS = 90
 
 # How much each input counts when we rank who to ask first. These are
 # relative to each other; they don't need to add up to anything.

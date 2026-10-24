@@ -28,7 +28,7 @@ Each responder gets a score. Higher means asked sooner.
 A responder with none of the required tags still makes the list, just lower down. Nothing filters on capability.
 
 **3. The ping** (`offer.offer_to`)
-The callout goes to the top responder's phone. They have **60 seconds** (90 before 4.2) to answer.
+The callout goes to the top responder's phone. They have **60 seconds** to answer (90 before 4.2; *proposed: back to 90*).
 There are three outcomes: **taken**, **turned down**, or **missed** (no answer in time, so the offer is withdrawn from their phone).
 
 **4. Walking the list** (`offer.dispatch`)

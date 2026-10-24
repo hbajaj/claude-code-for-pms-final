@@ -18,7 +18,10 @@ Status: **draft**. The code change is in `00-rook/code/dispatch-routing/`. It ha
    Any answer, yes or no, resets the run.
 2. **Scores ease back toward neutral**, by 0.02 a day (`SCORE_DECAY_PER_DAY`). A responder at the floor gets back to neutral in about 25 days even if they aren't pinged.
 3. **One-off reset** (`history.reset()`): puts the responders hurt by 4.2 back to neutral when the fix ships.
-4. **Ping wait stays at 60s.** Going back to 90s, or giving longer on the first ping, is a separate decision. It drives the "gone before I could answer" third of tickets.
+4. **Ping wait back to 90s** (`OFFER_TIMEOUT_SECONDS`). Decided by the Dispatch PM on 24 Oct; Helen still to confirm, since her approval covered items 1–3.
+   At 90s, misses were 1–3% of pings; at 60s they're 13–22%. This removes the trigger for the miss spiral and the "gone before I could answer" third of tickets.
+   Cost: up to 30s more per unanswered ping, and most callouts take 1–2 pings. Shipping it with the miss fix restores known behaviour.
+   A 90s-first, 60s-after split can be tested later as its own change.
 
 ## Evidence it targets the right thing
 - Replaying the miss rule over the pings in the database: since 4.2 there were **110 misses, and all of them were penalised**.
