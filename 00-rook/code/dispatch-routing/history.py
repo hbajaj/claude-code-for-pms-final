@@ -69,6 +69,18 @@ def reset(names=None):
         _miss_streaks.pop(name, None)
 
 
+def restore(scores):
+    """Set responders' scores directly, from a {name: score} mapping.
+
+    For putting responders back to where they were before a defect
+    pushed them down, rather than to NEUTRAL_SCORE, which can still
+    leave them below everyone they compete with.
+    """
+    for name, value in scores.items():
+        _scores[name] = (max(SCORE_FLOOR, min(SCORE_CEILING, value)), time.time())
+        _miss_streaks.pop(name, None)
+
+
 def _decayed(score, seconds):
     """Ease a score back toward NEUTRAL_SCORE with time."""
     step = SCORE_DECAY_PER_DAY * seconds / SECONDS_PER_DAY
