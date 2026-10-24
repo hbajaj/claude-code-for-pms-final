@@ -1,5 +1,21 @@
 # Dispatch routing — changelog
 
+## Routing v2, "Now" items — built and tested, NOT deployed (needs staff engineer review and Director of Product OK)
+- Capability is a filter: only responders with every required tag are
+  offered a callout. If none, fall back to partial matches and flag the
+  callout to the handler (`offer.flag_partial_match`, stub). Nobody with
+  none of the tags is offered it; an empty list is a coverage gap.
+- Second round: if nobody takes it, offer it once more to anyone who
+  missed (never to those who said no). A second miss isn't scored again.
+  Widening to neighbouring areas is not built: there's no area map here.
+- Scores stored by responder ID in `SCORE_STORE_PATH` (JSON, written
+  atomically), so they survive restarts and same-name responders don't
+  collide. `reset()`/`restore()` now take IDs.
+- **Deploy step:** run `history.import_legacy(old _scores, ids_by_name)`
+  once, or every score (including the four restored on 24 Oct) falls
+  back to neutral. It returns any names it couldn't match.
+- `test_routing.py`: 14 checks, run with `python test_routing.py`.
+
 ## Routing fix — shipped 24 Oct 2026
 Approved by the Director of Product and the staff engineer. Scores for Vesper,
 Meteor Mite, Farlight and The Undertow restored to pre-4.2 values after deploy.

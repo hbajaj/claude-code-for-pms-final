@@ -3,10 +3,17 @@ taking the callouts we send them.
 
 One of the three inputs to ranking. Sits between 0 and 1. Everyone
 starts at NEUTRAL_SCORE when we take them on.
+
+Scores are keyed by responder ID, not name, and written to
+config.SCORE_STORE_PATH so they survive a restart or deploy.
 """
 
+import json
+import os
+import tempfile
 import time
 
+import config
 from config import (
     ACCEPTANCE_CREDIT,
     DECLINE_PENALTY,
@@ -20,30 +27,26 @@ from config import (
 NEUTRAL_SCORE = 0.5
 SECONDS_PER_DAY = 24 * 60 * 60
 
-# name -> (score, when it was last set)
-_scores = {}
-# name -> how many pings in a row they've missed
-_miss_streaks = {}
+# responder id -> {"score", "updated_at", "miss_streak"}; loaded on first use
+_records = None
 
 
 def recent_acceptance(responder):
     """This responder's score right now. Read by routing.score()."""
-    score, updated_at = _scores.get(responder.name, (NEUTRAL_SCORE, None))
-    if updated_at is None:
-        return score
-    return _decayed(score, time.time() - updated_at)
+    record = _load().get(_key(responder))
+    if record is None:
+        return NEUTRAL_SCORE
+    return _decayed(record["score"], time.time() - record["updated_at"])
 
 
 def record_accepted(responder):
     """They took the callout. Score goes up."""
-    _miss_streaks[responder.name] = 0
-    _set(responder, recent_acceptance(responder) + ACCEPTANCE_CREDIT)
+    _set(responder, recent_acceptance(responder) + ACCEPTANCE_CREDIT, miss_streak=0)
 
 
 def record_declined(responder):
     """They turned it down. Score goes down."""
-    _miss_streaks[responder.name] = 0
-    _set(responder, recent_acceptance(responder) - DECLINE_PENALTY)
+    _set(responder, recent_acceptance(responder) - DECLINE_PENALTY, miss_streak=0)
 
 
 def record_missed(responder):
@@ -52,33 +55,74 @@ def record_missed(responder):
     Not the same as a no: they may have been reaching for the phone.
     Only a run of misses costs anything.
     """
-    streak = _miss_streaks.get(responder.name, 0) + 1
-    _miss_streaks[responder.name] = streak
+    record = _load().get(_key(responder), {})
+    streak = record.get("miss_streak", 0) + 1
+    score = recent_acceptance(responder)
     if streak >= MISS_STREAK_LIMIT:
-        _set(responder, recent_acceptance(responder) - MISS_PENALTY)
+        score -= MISS_PENALTY
+    _set(responder, score, miss_streak=streak)
 
 
-def reset(names=None):
-    """Put responders back to NEUTRAL_SCORE. Everyone if names is None.
-
-    For the one-off repair after 4.2, when misses were penalised as
-    turn-downs.
-    """
-    for name in list(_scores) if names is None else names:
-        _scores.pop(name, None)
-        _miss_streaks.pop(name, None)
+def reset(ids=None):
+    """Put responders back to NEUTRAL_SCORE, by responder ID. Everyone if
+    ids is None."""
+    records = _load()
+    for key in list(records) if ids is None else [str(i) for i in ids]:
+        records.pop(key, None)
+    _save()
 
 
 def restore(scores):
-    """Set responders' scores directly, from a {name: score} mapping.
+    """Set responders' scores directly, from a {responder id: score}
+    mapping.
 
     For putting responders back to where they were before a defect
     pushed them down, rather than to NEUTRAL_SCORE, which can still
     leave them below everyone they compete with.
     """
-    for name, value in scores.items():
-        _scores[name] = (max(SCORE_FLOOR, min(SCORE_CEILING, value)), time.time())
-        _miss_streaks.pop(name, None)
+    records = _load()
+    for responder_id, value in scores.items():
+        records[str(responder_id)] = _record(value, miss_streak=0)
+    _save()
+
+
+def import_legacy(legacy_scores, ids_by_name):
+    """One-off move from the old in-memory scores, keyed by name, to
+    this store, keyed by ID. Run once when this version is deployed, or
+    everyone (including restored responders) falls back to neutral.
+
+    legacy_scores: the old _scores dict, {name: (score, updated_at)}.
+    ids_by_name: {name: responder id}. Names missing from it are
+    returned so they can be checked by hand, not guessed.
+    """
+    records = _load()
+    unmatched = []
+    for name, (score, updated_at) in legacy_scores.items():
+        if name not in ids_by_name:
+            unmatched.append(name)
+            continue
+        record = _record(score, miss_streak=0)
+        record["updated_at"] = updated_at
+        records[str(ids_by_name[name])] = record
+    _save()
+    return unmatched
+
+
+def _key(responder):
+    return str(responder.id)
+
+
+def _record(value, miss_streak):
+    return {
+        "score": max(SCORE_FLOOR, min(SCORE_CEILING, value)),
+        "updated_at": time.time(),
+        "miss_streak": miss_streak,
+    }
+
+
+def _set(responder, value, miss_streak):
+    _load()[_key(responder)] = _record(value, miss_streak)
+    _save()
 
 
 def _decayed(score, seconds):
@@ -89,8 +133,22 @@ def _decayed(score, seconds):
     return min(NEUTRAL_SCORE, score + step)
 
 
-def _set(responder, value):
-    _scores[responder.name] = (
-        max(SCORE_FLOOR, min(SCORE_CEILING, value)),
-        time.time(),
-    )
+def _load():
+    global _records
+    if _records is None:
+        try:
+            with open(config.SCORE_STORE_PATH) as f:
+                _records = json.load(f)
+        except FileNotFoundError:
+            _records = {}
+    return _records
+
+
+def _save():
+    """Write all scores, replacing the file in one step so a crash
+    mid-write can't leave it half-written."""
+    directory = os.path.dirname(os.path.abspath(config.SCORE_STORE_PATH))
+    fd, tmp_path = tempfile.mkstemp(dir=directory, suffix=".tmp")
+    with os.fdopen(fd, "w") as f:
+        json.dump(_records, f)
+    os.replace(tmp_path, config.SCORE_STORE_PATH)

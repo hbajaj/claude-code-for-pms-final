@@ -15,6 +15,7 @@ Every answer feeds back into that responder's score, which affects where they la
 - Everyone marked available in the callout's region at that moment. Responders or their handlers set availability in the app. Routing never changes it.
 - Availability is a yes/no filter, not part of the score. (The Glossary lists it as a score input, which is wrong.)
 - Nobody available is left off. But see step 4: being on the list doesn't mean you'll be asked.
+- *Built, not yet deployed (routing v2):* capability becomes a filter. Only responders with every required tag are listed, with partial matches flagged only if nobody has them all. If nobody takes the callout, it's offered once more to anyone who missed it.
 
 **2. The order** (`routing.score`)
 Each responder gets a score. Higher means asked sooner.

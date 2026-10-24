@@ -39,3 +39,18 @@ SCORE_CEILING = 1.0
 
 # Anyone further out than this scores zero on proximity.
 PROXIMITY_HORIZON_MINUTES = 45
+
+# Capability is a filter, not just part of the score: only responders
+# with every tag a callout needs are offered it. If nobody available has
+# all of them, fall back to those with some of them, and flag the callout
+# to the handler as a partial match. Nobody with none of them is offered it.
+ALLOW_PARTIAL_MATCH_FALLBACK = True
+
+# When everyone on the list has missed or turned the callout down, offer
+# it once more to those who missed (never to those who said no) before
+# giving up on it.
+SECOND_ROUND_FOR_MISSED = True
+
+# Where recent-acceptance scores are kept, so they survive a restart.
+# Keyed by responder ID, not name.
+SCORE_STORE_PATH = "routing_scores.json"

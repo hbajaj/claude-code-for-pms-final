@@ -97,6 +97,10 @@ routing code in `00-rook/code/dispatch-routing/`.
 - Checks on 26 Oct, 31 Oct and 7 Nov need live data from Ravi (`post-deploy-checks.md`). Watch first for Eastgate flipping
   to Meteor Mite (1.00 vs The Gale 0.96). At week 2: message 2 to Dot and Kip, paste the wiki corrections, close the roadmap item.
 
+### Routing v2 (`routing-v2-proposal.md`)
+- Built and tested (14 checks in `test_routing.py`), **not deployed, so the repo is ahead of production**: capability filter,
+  second round for missed pings, scores stored by ID. Needs Wen's review and Helen's OK; the deploy needs `history.import_legacy`.
+
 ### Files (in `00-rook/company/` unless noted)
 routing-fix-proposal, how-routing-works, release-runbook-routing-fix, post-deploy-checks, score-reset-request,
 message-to-wen-and-marcus, q3-roadmap-update, wiki-corrections, dispatch-guardrail-metrics, open-questions;

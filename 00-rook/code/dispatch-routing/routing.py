@@ -10,18 +10,41 @@ from config import (
     WEIGHT_RECENT_ACCEPTANCE,
     WEIGHT_CAPABILITY_MATCH,
     PROXIMITY_HORIZON_MINUTES,
+    ALLOW_PARTIAL_MATCH_FALLBACK,
 )
 import availability
 import history
 
 
 def rank_for_callout(callout):
-    """Every available responder, best match first.
+    """The responders to offer this callout to, best match first."""
+    ranked, _ = candidates_for_callout(callout)
+    return ranked
 
-    Nobody is removed here. Ranking decides the order we ask in, not
-    whether we ask at all.
+
+def candidates_for_callout(callout):
+    """Who to offer this callout to, best match first, and whether
+    they're only a partial match.
+
+    Only available responders with every required capability tag are
+    ranked. If there are none, fall back to those with some of the tags
+    (partial match) so the handler can decide; responders with none of
+    them are never offered it. An empty list means a coverage gap.
+
+    Returns (ranked responders, partial_match).
     """
-    candidates = availability.available_for(callout.region, callout.at)
+    available = availability.available_for(callout.region, callout.at)
+    full = [r for r in available if capability_score(r, callout) == 1.0]
+    if full:
+        return _ranked(full, callout), False
+    if ALLOW_PARTIAL_MATCH_FALLBACK:
+        partial = [r for r in available if capability_score(r, callout) > 0.0]
+        if partial:
+            return _ranked(partial, callout), True
+    return [], False
+
+
+def _ranked(candidates, callout):
     scored = [(score(r, callout), r) for r in candidates]
     scored.sort(key=lambda pair: pair[0], reverse=True)
     return [responder for _, responder in scored]

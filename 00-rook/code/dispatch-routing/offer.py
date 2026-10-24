@@ -7,7 +7,7 @@ they don't, we move on.
 
 import time
 
-from config import OFFER_TIMEOUT_SECONDS
+from config import OFFER_TIMEOUT_SECONDS, SECOND_ROUND_FOR_MISSED
 import history
 import routing
 
@@ -19,10 +19,16 @@ MISSED = "missed"
 def dispatch(callout):
     """Offer a callout down the ranked list until somebody takes it.
 
-    Returns the responder who took it, or None if we got to the bottom
-    of the list without a yes.
+    If nobody takes it, offer it once more to anyone who missed it (a
+    miss isn't a no), in the same order. Returns the responder who took
+    it, or None if nobody did.
     """
-    for responder in routing.rank_for_callout(callout):
+    ranked, partial_match = routing.candidates_for_callout(callout)
+    if partial_match:
+        flag_partial_match(callout)
+
+    missed = []
+    for responder in ranked:
         answer = offer_to(responder, callout)
         if answer == TAKEN:
             history.record_accepted(responder)
@@ -31,7 +37,24 @@ def dispatch(callout):
             history.record_declined(responder)
         else:
             history.record_missed(responder)
+            missed.append(responder)
+
+    if SECOND_ROUND_FOR_MISSED:
+        for responder in missed:
+            answer = offer_to(responder, callout)
+            if answer == TAKEN:
+                history.record_accepted(responder)
+                return responder
+            if answer == TURNED_DOWN:
+                history.record_declined(responder)
+            # A second miss on the same callout isn't scored again.
     return None
+
+
+def flag_partial_match(callout):
+    """Tell the handler this callout is going to responders who don't
+    have every capability tag it needs."""
+    ...
 
 
 def offer_to(responder, callout):
