@@ -113,6 +113,8 @@ routing code in `00-rook/code/dispatch-routing/`.
 
 ### My to-dos
 1. Before the regroup, take the numbers to Marcus, Nadia and Ravi, and get Ravi to confirm them.
-2. Review the code fix and routing description with Wen. Get Helen's call on a hotfix or 4.3.
+2. **Helen approved the routing fix and the pre-4.2 score restore for the four starved responders (24 Oct).**
+   Send `message-to-wen-and-marcus.md`, then get Wen's review and their call on hotfix or 4.3.
+   Send message 1 to Aunt Dot and Kip (`00-rook/feedback/handler-messages.md`); message 2 only once it's live.
 3. Take the roadmap decisions to Helen, then paste the wiki corrections in.
 4. Send the data requests. Ask Supply what "callout load" means in their scheduler.

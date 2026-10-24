@@ -20,7 +20,7 @@ Sources: the Releases database, the 4.2 release page and comments, the dispatch-
 
 | Item | Product | Target | Status | Owner | Notes |
 | --- | --- | --- | --- | --- | --- |
-| 4.2 follow-up: routing fairness after the ping-wait cut | Dispatch | 4.3 (proposed) | **Proposed** | Dispatch PM with Wen Li | A miss is penalised the same as a turn-down, and scores never recover. Four responders (Vesper, Farlight, The Undertow, Meteor Mite) went from 70–86 pings before 4.2 to 11–17 after. Options to scope with Wen and Marcus: smaller or no penalty for misses, score decay, revisiting the 60s wait, and resetting affected responders. Confirm the numbers with Ravi first. |
+| 4.2 follow-up: routing fairness after the ping-wait cut | Dispatch | Hotfix or 4.3 (engineering to decide) | **Approved by Helen, 24 Oct** | Dispatch PM with Wen Li | Approved: misses scored separately, score decay, and the four starved responders (Vesper, Farlight, The Undertow, Meteor Mite) restored to their pre-4.2 scores. Not yet decided: the 60s ping wait. See routing-fix-proposal.md and score-reset-request.md. |
 
 ## Shipped, for reference (from the Releases database)
 
@@ -39,4 +39,4 @@ Sources: the Releases database, the 4.2 release page and comments, the dispatch-
 
 1. Is Availability Confidence still a Q3 commitment, and if so, in which release?
 2. Who owns Requisition approval chains on the Supply side, and what's in scope for 4.3?
-3. Do we add the 4.2 routing follow-up to 4.3, ahead of new work?
+3. ~~Do we add the 4.2 routing follow-up to 4.3, ahead of new work?~~ Approved 24 Oct. Engineering picks hotfix or 4.3.

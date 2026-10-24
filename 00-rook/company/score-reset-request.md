@@ -1,6 +1,8 @@
 # Request: restore the scores of four responders hurt by 4.2
 
-From the Dispatch PM to Wen Li (staff engineer), copying Marcus Oyelaran. Needs Helen Achebe's OK, because it changes who gets pinged.
+From the Dispatch PM to Wen Li (staff engineer), copying Marcus Oyelaran.
+**Status: approved by Helen Achebe (Director of Product), 24 Oct 2026**, as written: restore the pre-4.2 values below, with the miss-rule fix shipped first or at the same time.
+Engineering (Wen, Marcus) decides the release vehicle (hotfix or 4.3) and confirms the live values first.
 Related: `routing-fix-proposal.md` and `how-routing-works.md`.
 
 ## What we're asking

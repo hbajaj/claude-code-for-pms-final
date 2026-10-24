@@ -30,7 +30,7 @@ Status: **draft**. The code change is in `00-rook/code/dispatch-routing/`. It ha
 - [ ] Wen confirms how scores are stored. The code keeps them in memory, keyed by responder name, so do they survive a deploy? The reset approach depends on this.
 - [ ] Full replay of the ranking with old vs new rules (Wen or Ravi). Expected result: the four starved responders keep getting pinged.
 - [ ] Ravi confirms the acceptance and ping numbers against the official weekly series.
-- [ ] Helen decides between a hotfix now or 4.3. Marcus is told before `config.py` changes, as its header asks.
+- [x] Helen approved the fix and the score restore (24 Oct 2026). Wen and Marcus pick hotfix or 4.3. Marcus is told before `config.py` changes, as its header asks.
 - [ ] Glossary, README and the routing description are updated to match.
 
 ## How we'll know it worked
