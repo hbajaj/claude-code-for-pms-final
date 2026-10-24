@@ -1,5 +1,13 @@
 # Dispatch routing — changelog
 
+## Proposed for 4.3 (not yet reviewed by the staff engineer)
+- Missed pings no longer score as turn-downs. A miss is free unless it is
+  the 3rd or later in a row; any answer resets the run.
+- Recent-acceptance scores drift back toward neutral (0.02 a day), so a
+  responder who stops being asked can recover.
+- `history.reset()` for a one-off reset of responders penalised by 4.2.
+- Ping wait unchanged at 60s pending a separate decision.
+
 ## 4.2 — 12 Aug 2026
 - Rebalanced ranking weights: proximity up, recent acceptance down.
 - Callout offer timeout 90s -> 60s.

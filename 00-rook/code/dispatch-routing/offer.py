@@ -27,16 +27,19 @@ def dispatch(callout):
         if answer == TAKEN:
             history.record_accepted(responder)
             return responder
-        history.record_declined(responder)
+        if answer == TURNED_DOWN:
+            history.record_declined(responder)
+        else:
+            history.record_missed(responder)
     return None
 
 
 def offer_to(responder, callout):
     """Push the callout to a responder's phone and wait for a tap.
 
-    Returns TAKEN, TURNED_DOWN or MISSED. Everything downstream
-    treats the last two the same way: we asked, and we didn't get a
-    yes.
+    Returns TAKEN, TURNED_DOWN or MISSED. Either of the last two sends
+    the callout down the list, but they score differently: a turn-down
+    is a no, a miss may just be someone who didn't reach the phone.
     """
     push_to_device(responder, callout)
     deadline = time.time() + OFFER_TIMEOUT_SECONDS

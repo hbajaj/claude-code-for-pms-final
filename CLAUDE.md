@@ -81,36 +81,37 @@ cut the **ping wait 90s→60s**, and added persistent filters.
   Halloran all described it in interviews.
 - **The recovery to 73% is misleading.** Acceptance is rising because the starved responders
   no longer get pinged, so their misses drop out of the rate.
-  Callouts nobody took doubled, from 4–12 a week to 14–17. They aren't tracked anywhere:
+  Callouts nobody took rose from 4–12 a week to 14–17 for three weeks, then fell to 7. They aren't tracked anywhere:
   a coverage gap only counts capability mismatches.
 - **Answer to Marcus's 14 Aug question.** The config doesn't separate responders who turn jobs down. Lowering the acceptance
   weight actually *helped* them. The harm comes from misses being penalised like turn-downs.
-- **Unexplained:** callout volume fell from about 140 a week to 110–127 from release week onward.
-  Routing shouldn't change how many incidents come in. Check intake and logging.
+- **Unexplained:** callout volume fell from about 20 a day to about 16 *on release day* and stayed down,
+  across every area. It fell most in Northfield and Westbury (−33%), home of the two "halved" responders.
+  Check intake and logging, and whether handlers are routing around the console.
 - **Possible Supply effect (unverified):** Supply schedules maintenance where callout load is low.
   Starved responders now look low-load. "Maintenance booked on a bad day" tickets started 15 Aug.
 
 ### Other contradictions and gaps
-- **Roadmap is stale** (last reviewed 30 Jun; every owner is still Priya). Availability Confidence
-  is "Committed 4.2" but didn't ship, and deferrals aren't recorded anywhere. "Ping timeout tuning" shipped as
-  one blanket cut for everyone. The interviews were for a "console redesign" that isn't on the roadmap.
-- **Briefs are stale or misread.** Bulk Callout says "nobody's picked it up", but it shipped in 4.1.
-  The Audit Log brief says "ready to build", but it shipped in 4.0.
-  The Handler Phone App brief cites Aunt Dot, but her actual problem is the 60s race. Its owner is Sofia in the brief and Priya on the roadmap.
-  Requisition Approval Chains adds a *second* sign-off, but Halloran's complaint is an 11-day wait on
-  a single queue that ignores the priority field. The brief is a Supply item owned by the Dispatch PM, and it's full of scope creep.
-- **Filter persistence isn't just noise.** Ambrose and several tickets report filters resetting after updates
-  or saving the wrong ones.
-- **Team directory** (updated 2 Sept) doesn't list me.
-- **Data we lack.** The database has no availability windows, capability tags, routing scores or
-  answer times, so time-to-accept and coverage gap can't be checked. Routing scores live
-  in memory, keyed by responder name, so ask Wen whether they persist across deploys.
+- **Roadmap is stale** (last reviewed 30 Jun; all owners still Priya). Availability Confidence is "Committed 4.2" but
+  didn't ship. The interviews were for a "console redesign" that isn't on the roadmap.
+- **Briefs are stale or misread.** Bulk Callout (shipped 4.1) and Audit Log (shipped 4.0) read as unstarted.
+  The Phone App brief misreads Aunt Dot. Approval Chains doesn't fix Halloran's slow single queue.
+- **Filter persistence isn't just noise.** Filters reset silently and the active-filter badge is easy to miss,
+  so a handler can watch the wrong list.
+- **Data caution:** several tickets have word-for-word identical bodies. Check with Nadia before counting them.
+- **Data we lack:** availability, capability tags, routing scores, answer times. Team directory doesn't list me.
+
+### Drafts in this repo (all need review; none shared yet)
+- `00-rook/company/routing-fix-proposal.md`, with the code change in `00-rook/code/dispatch-routing/`
+  (misses scored separately, score decay, `history.reset()`; not run, not reviewed by Wen).
+- `00-rook/company/how-routing-works.md`: the missing routing description, for Wen to check.
+- `00-rook/company/q3-roadmap-update.md`: corrected roadmap, plus three decisions for Helen.
+- `00-rook/company/wiki-corrections.md`: paste-ready fixes for the Glossary, release notes, briefs and one-pager.
+- `00-rook/company/dispatch-guardrail-metrics.md`: weekly guardrails and eight data requests.
+- `00-rook/company/open-questions.md`: callout drop, Supply impact, filter bugs.
 
 ### My to-dos
-1. Before the regroup, take these numbers to Marcus, Nadia and Ravi. Get Ravi's official
-   weekly series to confirm them.
-2. Decide on a fix with Wen: stop penalising misses (or penalise them less), add score decay, and
-   reconsider the 60s wait. Then reset the starved responders.
-3. Write the missing routing description that Priya asked for.
-4. Agree the Q3 commitments with Helen and update the roadmap owners and the briefs.
-5. Brief Supply on the possible effect on maintenance scheduling.
+1. Before the regroup, take the numbers to Marcus, Nadia and Ravi, and get Ravi to confirm them.
+2. Review the code fix and routing description with Wen. Get Helen's call on a hotfix or 4.3.
+3. Take the roadmap decisions to Helen, then paste the wiki corrections in.
+4. Send the data requests. Ask Supply what "callout load" means in their scheduler.
