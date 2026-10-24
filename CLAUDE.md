@@ -103,7 +103,7 @@ routing code in `00-rook/code/dispatch-routing/`.
 
 ### Drafts in this repo (all need review; none shared yet)
 - `00-rook/company/routing-fix-proposal.md`, with the code change in `00-rook/code/dispatch-routing/`
-  (misses scored separately, score decay, `history.reset()`; basic checks pass locally; not reviewed by Wen).
+  (misses scored separately, score decay, `history.reset()`/`restore()`; reviewed by Wen and shipped 24 Oct).
 - `00-rook/company/how-routing-works.md`: the missing routing description, for Wen to check.
 - `00-rook/company/q3-roadmap-update.md`: corrected roadmap, plus three decisions for Helen.
 - `00-rook/company/wiki-corrections.md`: paste-ready fixes for the Glossary, release notes, briefs and one-pager.
@@ -121,3 +121,11 @@ routing code in `00-rook/code/dispatch-routing/`.
    Send message 1 to Aunt Dot and Kip (`00-rook/feedback/handler-messages.md`); message 2 only once it's live.
 3. Take the roadmap decisions to Helen, then paste the wiki corrections in.
 4. Send the data requests. Ask Supply what "callout load" means in their scheduler.
+- Replaying scores from the ping log (recursive SQL over `pings`) was the strongest evidence. Vesper, Meteor Mite, Farlight
+  and The Undertow hit 0; everyone else sits at 0.72–1.0. That's why we restored their pre-4.2 scores (0.96/1.00/0.84/0.88), not 0.5.
+- The interviewed handlers (Aunt Dot, Kip, Halloran, Ambrose) almost never file tickets. 14 draft tickets from the interviews are in
+  `00-rook/feedback/interview-tickets.md` (+ .csv for import), and handler messages are in `handler-messages.md`.
+- The rook-database stops on 6 Sep, so post-deploy checks (26 Oct, 31 Oct, 7 Nov) need live data from Ravi.
+  At week 2: message 2 to Dot and Kip, paste the wiki corrections, close the roadmap item.
+- Still open: Corporal Ashgrove and Halfmoon lost about half their pings but have top scores. That ties to the callout drop in
+  Northfield/Westbury, which starts on release day and is still unexplained.
