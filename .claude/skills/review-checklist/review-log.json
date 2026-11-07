@@ -1,0 +1,24 @@
+{
+  "05-super-speed/brief.md": {
+    "fingerprint": "8c38c12033957e58",
+    "reviewed_at": "2026-11-07 18:36 UTC",
+    "flags": 0,
+    "verdicts": {
+      "owner": "pass",
+      "success": "pass",
+      "scope": "pass",
+      "problem_first": "pass"
+    }
+  },
+  "05-super-speed/canvas-brief.dc.html": {
+    "fingerprint": "529aaf8e91b50d42",
+    "reviewed_at": "2026-11-07 18:36 UTC",
+    "flags": 0,
+    "verdicts": {
+      "owner": "pass",
+      "success": "pass",
+      "scope": "pass",
+      "problem_first": "pass"
+    }
+  }
+}
