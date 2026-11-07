@@ -1,0 +1,1063 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quiet Responder Prototype</title>
+<style>
+  :root {
+    --ground: #F6F5F1; --card: #FFFFFF; --ink: #16181D; --muted: #545B69; --line: #DEDBD3;
+    --soft: #EFEDE7; --quiet: #C2410C; --quiet-bg: #FFF4EC; --quiet-ink: #7A2E0B;
+    --busy: #1D4ED8; --busy-bg: #EEF3FF; --ok: #15803D; --ok-bg: #EAF6EE;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--ground); color: var(--ink); font: 16px/1.5 Inter, system-ui, -apple-system, "Segoe UI", sans-serif; }
+  button { font: inherit; cursor: pointer; }
+  button:focus-visible { outline: 3px solid var(--busy); outline-offset: 2px; }
+  .wrap { max-width: 1320px; margin: 0 auto; padding: 24px 16px 48px; }
+  header { display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-end; justify-content: space-between; margin-bottom: 20px; }
+  h1 { margin: 0; font-size: 28px; line-height: 1.2; }
+  .sub { margin: 4px 0 0; color: var(--muted); max-width: 680px; }
+  .seg { display: inline-flex; background: var(--soft); border-radius: 12px; padding: 4px; gap: 4px; }
+  .seg button { border: 0; background: transparent; padding: 10px 14px; border-radius: 9px; min-height: 44px; color: var(--muted); font-weight: 600; }
+  .seg button[aria-pressed="true"] { background: var(--card); color: var(--ink); box-shadow: 0 1px 2px rgba(0,0,0,.12); }
+  .ghost { border: 1px solid var(--line); background: var(--card); border-radius: 10px; padding: 10px 14px; min-height: 44px; font-weight: 600; }
+  .modebar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+  .waitset { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+  .wlabel { font-size: 13px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+  .wcustom { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; color: #3A3F4A; }
+  .wcustom input { width: 72px; min-height: 44px; border: 1px solid var(--line); border-radius: 10px; padding: 0 10px; font: inherit; font-weight: 700; background: var(--card); }
+  .player { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 12px; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; margin-bottom: 20px; }
+  .caption { margin: 0; flex: 1 1 320px; font-size: 15px; color: #3A3F4A; }
+  .caption b { color: var(--ink); }
+  /* Story view hides the sandbox controls; Under the hood shows formulas and scores */
+  .view-story .dev { display: none !important; }
+  .view-sandbox .storyonly { display: none !important; }
+  body:not(.hood-on) .hood { display: none !important; }
+  .modebar .toggle { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; min-height: 44px; }
+  .modebar .toggle input { width: 18px; height: 18px; }
+  .modenote { width: 100%; font-size: 14px; color: var(--muted); margin: 0; }
+
+  .stage { display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start; }
+  .phones { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; flex: 0 1 auto; }
+  .consolecol { flex: 1 1 460px; min-width: 0; }
+  .label { font-size: 13px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 0 0 10px; }
+  .label .sw { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: 0; }
+
+  /* Phone */
+  .phone { width: 290px; height: 590px; background: var(--ink); border-radius: 44px; padding: 12px; }
+  .screen { height: 100%; background: var(--card); border-radius: 34px; padding: 26px 16px 16px; display: flex; flex-direction: column; gap: 12px; overflow: hidden; }
+  .appbar { display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: var(--muted); font-weight: 600; }
+  .pill { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; padding: 3px 9px; border-radius: 999px; }
+  .pill.on { background: var(--ok-bg); color: var(--ok); }
+  .pill.off { background: var(--soft); color: var(--muted); }
+  button.pill { border: 0; min-height: 32px; padding: 4px 12px; }
+  button.pill:disabled { cursor: default; opacity: .8; }
+  .breakgrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .breakgrid .btn { font-size: 14px; min-height: 44px; }
+  .tile { background: var(--ground); border-radius: 16px; padding: 14px; }
+  .tile h3 { margin: 0; font-size: 16px; }
+  .tile p { margin: 6px 0 0; font-size: 14px; color: #3A3F4A; line-height: 1.4; }
+  .alert { border-radius: 18px; padding: 14px; color: #fff; display: flex; flex-direction: column; gap: 6px; flex: 1; min-height: 0; }
+  .alert .place { font-size: 14px; font-weight: 700; }
+  .alert .detail { font-size: 13px; line-height: 1.35; opacity: .95; }
+  .alert.mite { background: var(--quiet); }
+  .alert.gale { background: var(--busy); }
+  .alert.today { background: #3A3F4A; }
+  .alert .who { font-size: 13px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; opacity: .92; }
+  .alert .what { font-size: 19px; font-weight: 800; line-height: 1.2; }
+  .alert .meta { font-size: 14px; opacity: .92; }
+  /* Last 30 seconds: one slow pulse a second (well under the 3-flashes-a-second safety limit) */
+  @keyframes urgent { 0%, 100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, .0); filter: brightness(1); } 50% { box-shadow: 0 0 0 6px rgba(220, 38, 38, .55); filter: brightness(1.12); } }
+  .alert.urgent { animation: urgent 1s ease-in-out infinite; outline: 3px solid #FDE68A; outline-offset: -3px; }
+  .alert.urgent .btn.primary { min-height: 60px; font-size: 18px; box-shadow: 0 0 0 4px #FDE68A; }
+  .urgentbar { background: #FDE68A; color: #422006; border-radius: 10px; padding: 8px 10px; font-size: 14px; font-weight: 800; line-height: 1.3; }
+  @media (prefers-reduced-motion: reduce) { .alert.urgent { animation: none; } }
+  .status.urgent { background: #FEF2F2; color: #7F1D1D; }
+  .ring { display: flex; align-items: center; gap: 12px; }
+  .ring svg { flex: 0 0 48px; width: 48px; height: 48px; }
+  .ring .secs { font-size: 28px; font-weight: 800; font-variant-numeric: tabular-nums; }
+  .actions { display: flex; flex-direction: column; gap: 8px; margin-top: auto; }
+  .btn { border: 0; border-radius: 12px; min-height: 48px; font-weight: 700; font-size: 16px; }
+  .btn.primary { background: #fff; color: var(--ink); }
+  .btn.secondary { background: transparent; color: #fff; border: 1.5px solid rgba(255,255,255,.75); }
+  .btn.dark { background: var(--ink); color: #fff; }
+  .btn.light { background: var(--card); color: var(--ink); border: 1px solid #C9C5BB; }
+  .notice { border-radius: 16px; padding: 14px; }
+  .notice.warm { background: var(--quiet-bg); color: var(--quiet-ink); }
+  .notice.grey { background: var(--soft); color: var(--muted); }
+  .notice.good { background: var(--ok-bg); color: #14532D; }
+  .notice b { display: block; font-size: 15px; margin-bottom: 4px; }
+  .notice span { font-size: 14px; line-height: 1.4; display: block; }
+  /* Lock screen */
+  .lockbar { margin: 0 0 10px; }
+  .seg.small button { min-height: 36px; padding: 6px 12px; font-size: 13px; }
+  .screen.locked { background: #111827; color: #F9FAFB; gap: 10px; }
+  .lockclock { text-align: center; font-size: 54px; font-weight: 300; line-height: 1; letter-spacing: -1px; margin-top: 6px; font-variant-numeric: tabular-nums; }
+  .lockdate { text-align: center; font-size: 14px; color: #D1D5DB; margin-top: -4px; }
+  .notifs { display: flex; flex-direction: column; gap: 8px; margin-top: 6px; flex: 1; min-height: 0; }
+  .notif { background: rgba(255,255,255,.94); color: var(--ink); border-radius: 16px; padding: 10px 12px; display: flex; flex-direction: column; gap: 4px; }
+  .notif.mite { box-shadow: inset 4px 0 0 #C2410C; } .notif.gale { box-shadow: inset 4px 0 0 #1D4ED8; }
+  .notif.ok { background: #ECFDF3; } .notif.plain { background: rgba(255,255,255,.88); }
+  .notif.urgent { animation: urgent 1s ease-in-out infinite; outline: 3px solid #FDE68A; outline-offset: -3px; }
+  @media (prefers-reduced-motion: reduce) { .notif.urgent { animation: none; } }
+  .nhead { display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: #4B5563; }
+  .napp { display: inline-flex; align-items: center; gap: 6px; }
+  .nicon { width: 16px; height: 16px; border-radius: 4px; background: var(--ink); color: #fff; font-size: 10px; display: inline-flex; align-items: center; justify-content: center; }
+  .ntitle { font-size: 15px; line-height: 1.25; }
+  .nbody { font-size: 13px; line-height: 1.35; color: #374151; }
+  .nmeta { font-size: 12px; color: #4B5563; font-weight: 600; }
+  .nbar { height: 4px; border-radius: 2px; background: #E5E7EB; overflow: hidden; }
+  .nbar span { display: block; height: 100%; background: var(--ink); }
+  .nactions { display: grid; grid-template-columns: repeat(auto-fit, minmax(0, 1fr)); gap: 6px; margin-top: 4px; }
+  .nbtn { border: 0; border-radius: 10px; min-height: 44px; font-weight: 700; font-size: 14px; background: #E5E7EB; color: var(--ink); }
+  .nbtn.primary { background: var(--ink); color: #fff; }
+  .lockwidget { border: 0; border-radius: 14px; background: rgba(255,255,255,.12); color: #F9FAFB; padding: 10px 12px; text-align: left; font-weight: 700; font-size: 14px; display: flex; flex-wrap: wrap; align-items: center; gap: 2px 8px; min-height: 44px; }
+  .lockwidget .wsub { width: 100%; font-weight: 500; font-size: 12px; color: #D1D5DB; padding-left: 16px; }
+  .dotlive { width: 8px; height: 8px; border-radius: 50%; } .dotlive.on { background: #4ADE80; } .dotlive.off { background: #9CA3AF; }
+  .unlock { border: 0; background: transparent; color: #E5E7EB; font-weight: 600; font-size: 13px; min-height: 40px; text-decoration: underline; text-underline-offset: 3px; }
+  .phonecap { text-align: center; font-size: 14px; color: var(--muted); margin: 10px 0 0; }
+
+  /* Console */
+  .console { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 18px; display: flex; flex-direction: column; gap: 14px; }
+  .conhead { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; }
+  .conhead h2 { margin: 0; font-size: 18px; }
+  .controls { display: flex; flex-wrap: wrap; gap: 8px; }
+  .cbtn { border: 0; border-radius: 10px; padding: 10px 14px; min-height: 44px; font-weight: 700; background: var(--ink); color: #fff; }
+  .cbtn:disabled { background: var(--soft); color: #8A8F99; cursor: not-allowed; }
+  .cbtn.alt { background: var(--card); color: var(--ink); border: 1px solid var(--line); }
+  .cbtn.alt:disabled { background: var(--soft); border-color: var(--soft); }
+  .status { border-radius: 12px; padding: 12px 14px; background: var(--ground); font-size: 15px; display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; }
+  .rcard { border: 1px solid var(--line); border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 6px; }
+  .rcard.quiet { background: #FFFBF7; border-color: #F3C6A8; }
+  .rcard.busy { background: #F7F9FF; border-color: #C7D5F7; }
+  .rcard.offduty { background: var(--soft); }
+  .rtop { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+  .rname { font-weight: 800; font-size: 17px; }
+  .tag { font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; }
+  .big { font-size: 30px; font-weight: 800; line-height: 1.1; }
+  .big small { font-size: 14px; font-weight: 500; color: var(--muted); }
+  .reason { font-size: 14px; color: #3A3F4A; margin: 0; }
+  .fine { font-size: 13px; color: var(--muted); margin: 0; }
+  .scores { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; background: var(--ground); border-radius: 10px; padding: 8px 10px; margin-top: 2px; }
+  .scores div { display: flex; flex-direction: column; }
+  .slabel { font-size: 11px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); }
+  .sval { font-size: 18px; font-weight: 800; font-variant-numeric: tabular-nums; }
+  .sval.muted { color: var(--muted); }
+  .delta { font-size: 15px; font-weight: 800; font-variant-numeric: tabular-nums; padding-top: 2px; }
+  .delta.up { color: var(--ok); } .delta.down { color: var(--quiet); } .delta.flat { color: var(--muted); font-weight: 600; font-size: 14px; }
+  .banner { border-radius: 12px; padding: 12px 14px; background: var(--quiet-bg); color: var(--quiet-ink); font-size: 14px; }
+  .banner.blue { background: var(--busy-bg); color: #1E3A8A; }
+  .banner.attn ul { margin: 4px 0 0; padding-left: 18px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+  .chip { min-height: 40px !important; font-size: 13px !important; padding: 6px 10px; flex: 1 1 auto; }
+  .linkbtn { border: 0; background: none; padding: 6px 0; min-height: 36px; text-align: left; color: var(--busy); font-weight: 600; font-size: 13px; text-decoration: underline; text-underline-offset: 3px; }
+  .reported { color: var(--ok); font-weight: 600; }
+  .rank { border: 1px solid var(--line); border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+  .rank h3 { margin: 0; font-size: 16px; }
+  .rankrow { display: grid; grid-template-columns: 44px minmax(0, 1fr) 56px; gap: 4px 10px; align-items: center; padding: 10px; border-radius: 10px; background: var(--ground); }
+  .rankrow.first { background: var(--ok-bg); }
+  .rankrow.off { opacity: .7; }
+  .rnum { grid-row: span 3; font-size: 24px; font-weight: 800; text-align: center; }
+  .rwhy { grid-column: 2 / 4; font-size: 14px; color: #3A3F4A; }
+  .rname { font-weight: 800; display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 8px; }
+  .rtot { font-size: 20px; font-weight: 800; text-align: right; font-variant-numeric: tabular-nums; }
+  .rparts { grid-column: 2 / 4; font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .move { font-size: 12px; font-weight: 800; padding: 2px 8px; border-radius: 999px; }
+  .move.up { background: #DCFCE7; color: #14532D; } .move.down { background: #FEE2E2; color: #7F1D1D; }
+  .aidrow { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px 12px; padding: 10px; border-radius: 10px; background: var(--ground); }
+  .aidrow > div:first-child { display: flex; flex-direction: column; }
+  .aidrow.live { background: #F3EEFF; outline: 2px solid #7C3AED; }
+  .aidbtns { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+  .avail { border: 0; border-radius: 999px; min-height: 36px; padding: 4px 14px; font-weight: 700; font-size: 13px; }
+  .avail.yes { background: var(--ok-bg); color: var(--ok); } .avail.no { background: var(--soft); color: var(--muted); }
+  .avail:disabled { cursor: default; opacity: .7; }
+  .rbar { display: flex; height: 8px; border-radius: 4px; overflow: hidden; background: #E2DFD7; grid-column: 2; }
+  .rbar span { display: block; height: 100%; }
+
+  .lower { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 24px; margin-top: 24px; }
+  @media (max-width: 860px) { .lower { grid-template-columns: minmax(0, 1fr); } }
+  .panel { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 18px; }
+  .panel h2 { margin: 0 0 10px; font-size: 18px; }
+  .log { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; max-height: 340px; overflow-y: auto; }
+  .log li { font-size: 14px; padding: 8px 10px; border-radius: 10px; background: var(--ground); }
+  .log li .t { color: var(--muted); font-variant-numeric: tabular-nums; margin-right: 6px; }
+  .log li.bad { background: var(--quiet-bg); color: var(--quiet-ink); }
+  .log li.good { background: var(--ok-bg); color: #14532D; }
+  .log li.story { background: var(--card); border: 1px solid var(--line); font-weight: 600; }
+  .steps { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; font-size: 15px; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; margin-top: 14px; }
+  th, td { text-align: left; padding: 8px 6px; border-top: 1px solid var(--line); }
+  th { color: var(--muted); font-weight: 600; }
+  td.num { font-variant-numeric: tabular-nums; font-weight: 700; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>When a responder goes quiet: prototype</h1>
+      <p class="sub">Kip looks after two responders in Eastgate. Send a callout from Kip's console, answer it (or don't) on either phone, and compare how it works today with the proposed change.</p>
+    </div>
+    <div class="modebar">
+      <div class="seg" role="group" aria-label="View">
+        <button type="button" data-action="view" data-view="story" id="v-story">Story</button>
+        <button type="button" data-action="view" data-view="sandbox" id="v-sandbox">Sandbox</button>
+      </div>
+      <label class="toggle dev"><input type="checkbox" id="hood-toggle" data-action="hood"> Under the hood</label>
+      <div class="seg" role="group" aria-label="Which version">
+        <button type="button" data-action="mode" data-mode="today" id="m-today">Today (24 Oct rule)</button>
+        <button type="button" data-action="mode" data-mode="after" id="m-after">After (proposed)</button>
+      </div>
+      <button type="button" class="ghost" data-action="reset">Reset</button>
+      <div class="waitset dev" role="group" aria-label="Ping wait">
+        <span class="wlabel">Ping wait</span>
+        <div class="seg">
+          <button type="button" data-action="wait" data-wait="60" id="w-60">60s</button>
+          <button type="button" data-action="wait" data-wait="90" id="w-90">90s</button>
+        </div>
+        <label class="wcustom">Custom <input type="number" id="wait-input" min="10" max="300" step="5" value="90" aria-label="Custom ping wait in seconds"> s</label>
+      </div>
+      <p class="modenote" id="modenote"></p>
+    </div>
+  </header>
+
+  <div class="player">
+    <button type="button" class="cbtn" data-action="play" id="play">&#9654; Play full cycle</button>
+    <button type="button" class="cbtn alt" data-action="stop" id="stop" disabled>Stop</button>
+    <p class="caption" id="caption" aria-live="polite">Plays four callouts through both phones and Kip's console, start to finish, in whichever version and ping wait you've chosen.</p>
+  </div>
+
+  <div class="stage">
+    <div class="phones">
+      <div>
+        <p class="label"><span class="sw" style="background:#C2410C"></span>Meteor Mite's phone</p>
+        <div class="lockbar" id="lockbar-mite"></div>
+        <div class="phone"><div class="screen" id="phone-mite" aria-live="polite"></div></div>
+        <p class="phonecap">Gone quiet since 4.2</p>
+      </div>
+      <div>
+        <p class="label"><span class="sw" style="background:#1D4ED8"></span>The Gale's phone</p>
+        <div class="lockbar" id="lockbar-gale"></div>
+        <div class="phone"><div class="screen" id="phone-gale" aria-live="polite"></div></div>
+        <p class="phonecap">Carrying most of Eastgate</p>
+      </div>
+    </div>
+    <div class="consolecol">
+      <p class="label">Kip's console</p>
+      <div class="console" id="console"></div>
+    </div>
+  </div>
+
+  <div class="lower">
+    <div class="panel">
+      <h2>What just happened</h2>
+      <ul class="log" id="log" aria-live="polite"></ul>
+    </div>
+    <div class="panel storyonly">
+      <h2>How to watch this</h2>
+      <ol class="steps">
+        <li>Press <b>Play full cycle</b>. Four callouts run through Meteor Mite's phone, The Gale's phone and Kip's console, with a caption for each step.</li>
+        <li>Watch Mite's lock screen: in After, a ping can be taken without unlocking, and a miss says it doesn't count.</li>
+        <li>Watch Kip's console: each card says <i>why</i> a responder is quiet or busy, and the ranking says who's asked next and why.</li>
+        <li>Switch to <b>Today</b> and play it again. Mite loses points silently and drops to second; nobody is told.</li>
+        <li>Want to try it yourself? Switch to <b>Sandbox</b>.</li>
+      </ol>
+    </div>
+    <div class="panel dev">
+      <h2>Try this</h2>
+      <ol class="steps">
+        <li>Press <b>Send a callout</b>. Meteor Mite's phone rings first (nearest).</li>
+        <li>Or press <b>Play full cycle</b> to watch four callouts run start to finish on their own.</li>
+        <li>Set the <b>Ping wait</b> to 60s, 90s or any custom value. It applies from the next ping.</li>
+        <li>Press <b>Skip to last 30s</b>. In After, the phone alerts again and pulses until it's answered or runs out.</li>
+        <li>Press <b>Let it run out</b>. The callout moves to The Gale's phone.</li>
+        <li>Take it on The Gale's phone, or let that run out too: in After, it comes back to Mite as "still open".</li>
+        <li>Miss three in a row on one phone. That phone asks "All good? Still free for callouts?" and Kip's card says why.</li>
+        <li>Watch <b>Next callout: who's asked first</b> on Kip's console. In Today, Mite's third miss pushes Mite down to #2.</li>
+        <li>Phones start <b>Locked</b>. In After, a ping arrives as a notification you can answer without unlocking. In Today you have to unlock and open the app first. Switch any phone to <b>Unlocked</b> to see the app.</li>
+        <li>Tap <b>On duty ▾</b> on either phone to take a break (15 min, 30 min, 1 hour) or go off for the rest of the day.</li>
+        <li>Put both phones on a break, then send a callout. In After it passes to the nearest available responder outside Eastgate; answer for them on Kip's console.</li>
+        <li>Switch between <b>Today</b> and <b>After</b> and repeat.</li>
+      </ol>
+      <table class="hood" aria-label="Score under the hood">
+        <thead><tr><th scope="col">Under the hood</th><th scope="col">Score</th><th scope="col">Rule</th></tr></thead>
+        <tbody id="hood"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  // Ping wait is set live from the header (60s, 90s or any custom value) and applies from the next ping.
+  let waitSetting = 90;
+  // Story: a clean walkthrough for reviewers. Sandbox: every control. Under the hood: formulas and scores.
+  let view = 'story', hoodOn = false;
+  // Urgency starts at 30s left, or halfway through a ping wait shorter than 60s.
+  const urgentAt = (c) => Math.min(30, Math.floor(c.wait / 2));
+  const MITE = 'Meteor Mite', GALE = 'The Gale';
+  const NAMES = [MITE, GALE];
+  const KEY = { [MITE]: 'mite', [GALE]: 'gale' };
+  const SHORT = { [MITE]: 'Mite', [GALE]: 'The Gale' };
+  // Illustrative incidents, one per callout in turn. All need the flight tag both responders carry.
+  const INCIDENTS = [
+    { title: 'Stranded on a water tower', place: 'Harrow St rail yard', detail: 'Two maintenance workers on the tank roof after their ladder gave way. Wind picking up.', urgency: 'Urgent' },
+    { title: 'Crane operator stuck at height', place: 'Northbank build site', detail: 'Cab stalled 40 m up after a power cut. Site crew waiting on the ground.', urgency: 'High' },
+    { title: 'Residents on a burning roof', place: 'Mercer Court flats', detail: 'Six people on the roof, stairwell blocked. Fire service on scene and asking for air lift.', urgency: 'Urgent' },
+    { title: 'Hiker on a quarry ledge', place: 'Old Eastgate quarry', detail: 'Fell partway down the face, now on a ledge 25 m below the rim. Light fading.', urgency: 'High' },
+    { title: 'Glider pilot in the canal', place: 'Lockside Canal', detail: 'Conscious and holding the wreck. Current strong after the rain.', urgency: 'Urgent' }
+  ];
+
+  function fresh(mode) {
+    const base = (pings, usual, hist, pts, tone) => ({
+      pings, usual, hist, pts, tone, streak: 0, onDuty: true, screen: 'idle', note: null, lastMiss: null,
+      away: null, picking: false,  // away: { kind: 'break' | 'day' | 'off', until }
+      locked: true                 // phones start locked, in a pocket: where most misses happen
+    });
+    const resp = {
+      [MITE]: base(4, 11, [1,0,1,1,0,1,0,1,1,0], 0.50, 880),
+      [GALE]: base(21, 13, [1,1,1,0,1,1,1,1,1,1], 0.93, 523)
+    };
+    // Last week's score is where each responder stood when this week started,
+    // i.e. when the demo opens or resets.
+    NAMES.forEach((n) => { resp[n].lastWeek = share(resp[n]); });
+    return { mode: mode || 'after', n: 4120, resp, callout: null, log: [],
+      aidAvail: { 'Nightwell': true, 'Ironvale': true, 'Sgt. Bulwark': true } };
+  }
+  const $ = (id) => document.getElementById(id);
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const clock = () => new Date().toTimeString().slice(0, 5);
+  const after = () => S.mode === 'after';
+  const takes = (r) => r.hist.filter(Boolean).length;
+  const share = (r) => (takes(r) + 0.75 * 5) / (r.hist.length + 5);
+  const clamp = (v) => Math.max(0, Math.min(1, v));
+  let S = fresh('after');
+
+  function log(text, kind) {
+    S.log.unshift({ t: clock(), text, kind: kind || '' });
+    S.log = S.log.slice(0, 50);
+  }
+
+  function beep(name) {
+    try {
+      const Ctx = window.AudioContext || window.webkitAudioContext;
+      if (!Ctx) return;
+      const ctx = beep.ctx || (beep.ctx = new Ctx());
+      const o = ctx.createOscillator(), g = ctx.createGain();
+      o.frequency.value = after() ? S.resp[name].tone : 660;
+      g.gain.setValueAtTime(0.0001, ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.15, ctx.currentTime + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.35);
+      o.connect(g).connect(ctx.destination);
+      o.start(); o.stop(ctx.currentTime + 0.4);
+    } catch (e) { /* sound is optional */ }
+  }
+
+  // ---- callout flow ----
+  function sendCallout() {
+    if (S.callout && S.callout.phase === 'pinging') return;
+    const queue = ranking().filter((x) => x.onDuty).map((x) => x.name);
+    S.n += 1;
+    S.callout = { n: S.n, time: clock(), queue, idx: -1, round: 1, missed: [], phase: 'pinging', left: 0, current: null };
+    NAMES.forEach((n) => { S.resp[n].note = null; });
+    S.callout.inc = INCIDENTS[(S.n - 4121) % INCIDENTS.length];
+    log('Callout #' + S.n + ' comes in: ' + S.callout.inc.title + ', ' + S.callout.inc.place + ', Eastgate. Needs flight.');
+    if (!queue.length) { noOneLocal(); return; }
+    pingNext();
+  }
+
+  // ---- mutual aid: nobody on duty in Eastgate, so pass the callout to the nearest available responders nearby ----
+  // Real responders and handlers from rook-database; travel times are illustrative (the database has no area map).
+  const NEARBY = [
+    { name: 'Nightwell', area: 'Midtown', handler: 'Marjorie Sung', min: 12 },
+    { name: 'Ironvale', area: 'Riverside', handler: 'Teresa Alvarez', min: 19 },
+    { name: 'Sgt. Bulwark', area: 'Foundry Row', handler: 'Halloran', min: 26 }
+  ];
+  const nearby = (name) => NEARBY.find((x) => x.name === name);
+  const anyLocalOnDuty = () => NAMES.some((n) => S.resp[n].onDuty);
+
+  function noOneLocal() {
+    if (!after()) { unserved('Nobody on duty in Eastgate. Passing it to another area isn’t supported today.'); return; }
+    const c = S.callout;
+    c.aid = true; c.current = null; c.aidIdx = -1;
+    c.aidQueue = NEARBY.filter((x) => S.aidAvail[x.name]).sort((a, b) => a.min - b.min).map((x) => x.name);
+    log('Nobody on duty in Eastgate. Passing the callout to the nearest available responders in other areas, closest first.');
+    aidNext();
+  }
+
+  function aidNext() {
+    const c = S.callout;
+    c.aidIdx += 1;
+    while (c.aidIdx < c.aidQueue.length && !S.aidAvail[c.aidQueue[c.aidIdx]]) c.aidIdx += 1;
+    if (c.aidIdx >= c.aidQueue.length) { c.aidCurrent = null; unserved('Nobody on duty in Eastgate, and no nearby responder took it.'); return; }
+    const x = nearby(c.aidQueue[c.aidIdx]);
+    c.aidCurrent = x.name; c.wait = waitSetting; c.left = c.wait;
+    log('Pinging ' + x.name + ' (' + x.area + ', ' + x.min + ' min away). Their handler ' + x.handler + ' and Kip both see it.');
+  }
+
+  function aidAnswer(kind) {
+    const c = S.callout, name = c.aidCurrent;
+    if (!name) return;
+    if (kind === 'take') {
+      c.phase = 'taken'; c.by = name + ' from ' + nearby(name).area; c.aidCurrent = null;
+      log(name + ' (' + nearby(name).area + ') took callout #' + c.n + '. Kip sees who is coming and when.', 'good');
+      return;
+    }
+    log(name + (kind === 'decline' ? ' turned it down.' : ' didn’t answer in time.') + ' Trying the next nearest.');
+    aidNext();
+  }
+
+  function pingNext() {
+    const c = S.callout;
+    c.idx += 1;
+    while (c.idx < c.queue.length && !S.resp[c.queue[c.idx]].onDuty) c.idx += 1;
+    if (c.idx >= c.queue.length) {
+      const again = c.missed.filter((n) => S.resp[n].onDuty);
+      if (after() && c.round === 1 && again.length) {
+        c.round = 2; c.queue = again; c.idx = 0;
+        log('Nobody took it. Offering it once more to those who missed it (never to those who said no).');
+      } else if (!anyLocalOnDuty()) {
+        noOneLocal();
+        return;
+      } else {
+        unserved(after() ? 'Everyone missed or said no.' : 'Nobody took it in time.');
+        return;
+      }
+    }
+    ping(c.queue[c.idx]);
+  }
+
+  function ping(name) {
+    const c = S.callout, r = S.resp[name];
+    c.current = name; c.wait = waitSetting; c.left = c.wait;
+    r.pings += 1;
+    r.screen = c.round === 2 ? 'again' : 'ping';
+    beep(name);
+    log((c.round === 2 ? 'Second chance: ' : '') + 'Pinging ' + name + '. ' + c.wait + 's to answer.');
+  }
+
+  function take(name) {
+    const c = S.callout, r = S.resp[name];
+    r.hist = r.hist.concat(1).slice(-30); r.streak = 0; r.pts = clamp(r.pts + 0.08);
+    c.phase = 'taken'; c.current = null; c.by = name;
+    r.screen = 'taken';
+    log(name + ' took callout #' + c.n + '.', 'good');
+  }
+
+  function decline(name) {
+    const r = S.resp[name];
+    r.hist = r.hist.concat(0).slice(-30); r.streak = 0; r.pts = clamp(r.pts - 0.12);
+    r.screen = 'declined'; r.askWhy = after(); r.lastReason = null;
+    log(name + ' turned it down.' + (after() ? ' Counts as a no in their share.' : ' −0.12 points.'));
+    pingNext();
+  }
+
+  function miss(name) {
+    const c = S.callout, r = S.resp[name];
+    r.streak += 1;
+    if (!c.missed.includes(name)) c.missed.push(name);
+    if (!after() && r.streak >= 3) {
+      r.pts = clamp(r.pts - 0.12);
+      log(name + ' missed ' + r.streak + ' in a row: −0.12 points, silently. Nobody is told.', 'bad');
+    } else if (after()) {
+      log(name + ' missed it. No effect on their score' + (r.streak >= 3 ? '; asking if they’re still on duty.' : '.'));
+    } else {
+      log(name + ' missed it (' + r.streak + ' in a row). Moving on.');
+    }
+    r.lastMiss = c.time; r.lastMissInc = c.inc.title;
+    r.screen = after() ? (r.streak >= 3 ? 'duty' : 'missed') : 'gone';
+    pingNext();
+  }
+
+  function unserved(why) {
+    const c = S.callout;
+    c.phase = 'unserved'; c.current = null; c.why = why;
+    log('Callout #' + c.n + ' went unserved. ' + why, 'bad');
+  }
+
+  // ---- render ----
+  function ring(left, total) {
+    const R = 26, C = 2 * Math.PI * R, f = left / total;
+    return '<svg width="64" height="64" viewBox="0 0 64 64" aria-hidden="true">' +
+      '<circle cx="32" cy="32" r="' + R + '" fill="none" stroke="rgba(255,255,255,.3)" stroke-width="6"></circle>' +
+      '<circle cx="32" cy="32" r="' + R + '" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" ' +
+      'stroke-dasharray="' + C.toFixed(1) + '" stroke-dashoffset="' + (C * (1 - f)).toFixed(1) + '" transform="rotate(-90 32 32)"></circle></svg>';
+  }
+
+  function weekTile(name) {
+    const r = S.resp[name];
+    if (r.pings < r.usual / 2) return r.pings + ' pings so far. You usually get about ' + r.usual + '. Fewer reached you after missed pings in August; that’s been reset.';
+    if (r.pings > r.usual * 1.3) return r.pings + ' pings so far. You usually get about ' + r.usual + '. You’re covering more of Eastgate than usual; Kip can see it.';
+    return r.pings + ' pings so far. You usually get about ' + r.usual + '. You’re on your usual pace.';
+  }
+
+  function phoneHTML(name) {
+    return S.resp[name].locked ? lockHTML(name) : appHTML(name);
+  }
+
+  function lockbarHTML(name) {
+    const r = S.resp[name], w = 'data-who="' + name + '"';
+    return '<div class="seg small" role="group" aria-label="' + name + ' phone screen">' +
+      '<button type="button" data-action="lockset" data-lock="1" ' + w + ' aria-pressed="' + r.locked + '">Locked</button>' +
+      '<button type="button" data-action="lockset" data-lock="0" ' + w + ' aria-pressed="' + !r.locked + '">Unlocked</button></div>';
+  }
+
+  // Lock screen: the ping arrives as a notification. In After it carries Take it / Turn it down,
+  // so nobody has to unlock and open the app inside the ping wait. Today it only says "New callout".
+  function lockHTML(name) {
+    const r = S.resp[name], c = S.callout, w = 'data-who="' + name + '"';
+    const live = c && c.phase === 'pinging' && c.current === name;
+    const now = new Date();
+    let h = '<div class="lockclock">' + clock() + '</div>' +
+      '<div class="lockdate">' + now.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' }) + '</div>' +
+      '<div class="notifs">';
+    const head = (when) => '<div class="nhead"><span class="napp"><span class="nicon" aria-hidden="true">R</span>Rook Dispatch</span><span>' + when + '</span></div>';
+
+    if (live && after()) {
+      const urgent = c.left <= urgentAt(c);
+      h += '<div class="notif ' + KEY[name] + (urgent ? ' urgent' : '') + '" role="alertdialog" aria-label="Callout for ' + name + '">' + head('now') +
+        (urgent ? '<span class="urgentbar">' + c.left + 's left · still yours if you tap now</span>' : '') +
+        '<b class="ntitle">' + (r.screen === 'again' ? 'Still open · ' : '') + 'Callout for ' + name + '</b>' +
+        '<span class="nbody"><b>' + esc(c.inc.title) + '</b> · ' + esc(c.inc.place) + ' · ' + TRAVEL[name] + ' min away</span>' +
+        '<div class="nbar" aria-hidden="true"><span style="width:' + (c.left / c.wait * 100).toFixed(1) + '%"></span></div>' +
+        '<span class="nmeta">' + c.left + 's left · ' + c.inc.urgency + ' · needs flight</span>' +
+        '<div class="nactions"><button type="button" class="nbtn primary" data-action="take" ' + w + '>Take it</button>' +
+        '<button type="button" class="nbtn" data-action="decline" ' + w + '>Turn it down</button></div></div>';
+    } else if (live) {
+      h += '<div class="notif plain">' + head('now') + '<b class="ntitle">New callout</b>' +
+        '<span class="nbody">Unlock and open the app to answer.</span>' +
+        '<div class="nactions"><button type="button" class="nbtn" data-action="unlock" ' + w + '>Open</button></div></div>';
+    } else if (after() && r.onDuty && r.screen === 'duty') {
+      h += '<div class="notif">' + head(esc(r.lastMiss || '')) + '<b class="ntitle">All good? No penalty.</b>' +
+        '<span class="nbody">' + esc(r.lastMissInc || '') + ' went by. That’s 3 in a row, which happens. Still free for callouts?</span>' +
+        '<div class="nactions"><button type="button" class="nbtn primary" data-action="here" ' + w + '>I’m here</button>' +
+        '<button type="button" class="nbtn" data-action="offduty" ' + w + '>Going off duty</button></div></div>';
+    } else if (r.screen === 'missed' && after()) {
+      h += '<div class="notif">' + head(esc(r.lastMiss || '')) + '<b class="ntitle">Missed callout</b>' +
+        '<span class="nbody">' + esc(r.lastMissInc || '') + '. It doesn’t count against you.</span></div>';
+    } else if (r.screen === 'gone' && !after()) {
+      h += '<div class="notif plain">' + head('') + '<b class="ntitle">Callout no longer available</b></div>';
+    } else if (r.screen === 'taken' && c) {
+      h += '<div class="notif ok">' + head('now') + '<b class="ntitle">' + (after() ? 'It’s yours · ' + esc(c.inc.title) : 'Accepted') + '</b>' +
+        (after() ? '<span class="nbody">' + esc(c.inc.place) + '. Kip can see you’re on it. Unlock for directions.</span>' : '') + '</div>';
+    } else if (r.screen === 'declined') {
+      h += '<div class="notif plain">' + head('') + '<b class="ntitle">Turned down</b>' +
+        (after() ? '<span class="nbody">Offered to the next responder.' + (r.askWhy ? ' Why? (optional, one tap)' : r.lastReason ? ' You said: ' + esc(r.lastReason) + '.' : '') + '</span>' : '') +
+        (r.askWhy ? whyChips(name, 'nbtn') : '') + '</div>';
+    }
+    if (r.note && !live) h += '<div class="notif ok">' + head('') + '<b class="ntitle">' + esc(r.note) + '</b></div>';
+    h += '</div>';
+
+    h += '<button type="button" class="lockwidget" data-action="availlock" ' + w + '>' +
+      '<span class="dotlive ' + (r.onDuty ? 'on' : 'off') + '" aria-hidden="true"></span>' +
+      (r.onDuty ? 'Rook · On duty' : 'Rook · ' + awayText(r)) +
+      (after() ? '<span class="wsub">' + r.pings + ' pings this week · tap to change</span>' : '') + '</button>' +
+      '<button type="button" class="unlock" data-action="unlock" ' + w + '>Unlock</button>';
+    return h;
+  }
+
+  // One-tap reasons after a turn-down. Optional, and asked after the callout has already moved on,
+  // so it never slows the next responder down.
+  const REASONS = ['Too far', 'Busy right now', 'Not my skill'];
+  function whyChips(name, cls) {
+    return '<div class="chips">' + REASONS.map((x) => '<button type="button" class="' + cls + ' chip" data-action="why" data-reason="' + x + '" data-who="' + name + '">' + x + '</button>').join('') + '</div>';
+  }
+
+  function appHTML(name) {
+    const r = S.resp[name], c = S.callout, w = 'data-who="' + name + '"';
+    const live = c && c.phase === 'pinging' && c.current === name;
+    const duty = '<button type="button" class="pill ' + (r.onDuty ? 'on' : 'off') + '" data-action="avail" ' + w +
+      (live ? ' disabled' : '') + ' aria-expanded="' + r.picking + '">' + (r.onDuty ? 'On duty' : awayShort(r)) + ' ▾</button>';
+    let h = '<div class="appbar"><span>Rook Dispatch</span>' + duty + '</div>';
+
+    if (r.picking && !live) {
+      h += '<div class="tile"><h3>Your availability</h3><p>' + (r.onDuty ? 'You’re on duty. Need a break?' : awayText(r) + '.') +
+        ' Kip sees this straight away, and no pings come while you’re away. Your score is untouched.</p></div>' +
+        '<div class="actions">' +
+        (r.onDuty ? '' : '<button type="button" class="btn dark" data-action="backon" ' + w + '>Back on duty now</button>') +
+        '<div class="breakgrid">' +
+        [15, 30, 60].map((m) => '<button type="button" class="btn light" data-action="break" data-mins="' + m + '" ' + w + '>Break ' + (m < 60 ? m + ' min' : '1 hour') + '</button>').join('') +
+        '<button type="button" class="btn light" data-action="restofday" ' + w + '>Rest of the day</button></div>' +
+        '<button type="button" class="btn light" data-action="avail" ' + w + '>Close</button></div>';
+      return h;
+    }
+
+    if (live) {
+      if (after()) {
+        const urgent = c.left <= urgentAt(c);
+        h += '<div class="alert ' + KEY[name] + (urgent ? ' urgent' : '') + '" role="alertdialog" aria-label="Callout for ' + name + '">' +
+          (urgent ? '<span class="urgentbar">' + c.left + ' seconds left · still yours if you tap now</span>' : '') +
+          '<span class="who">' + (r.screen === 'again' ? 'Still open · nobody else took it' : 'Callout for ' + name) + '</span>' +
+          '<span class="what">' + esc(c.inc.title) + '</span>' +
+          '<span class="place">' + esc(c.inc.place) + ', Eastgate · ' + TRAVEL[name] + ' min away</span>' +
+          '<span class="detail">' + esc(c.inc.detail) + '</span>' +
+          '<span class="meta">' + c.inc.urgency + ' · needs flight · #' + c.n + ' · from Kip</span>' +
+          '<div class="ring">' + ring(c.left, c.wait) + '<span class="secs">' + c.left + 's</span></div>' +
+          '<div class="actions"><button type="button" class="btn primary" data-action="take" ' + w + '>Take it</button>' +
+          '<button type="button" class="btn secondary" data-action="decline" ' + w + '>Turn it down</button></div></div>';
+      } else {
+        h += '<div class="alert today" role="alertdialog" aria-label="New callout">' +
+          '<span class="who">Rook</span><span class="what">New callout</span>' +
+          '<span class="meta">' + c.left + 's</span>' +
+          '<div class="actions"><button type="button" class="btn primary" data-action="take" ' + w + '>Accept</button>' +
+          '<button type="button" class="btn secondary" data-action="decline" ' + w + '>Decline</button></div></div>';
+      }
+      return h;
+    }
+
+    if (r.screen === 'duty' && r.onDuty && after()) {
+      h += '<div class="notice warm"><b>Missed callout · ' + esc(r.lastMiss || clock()) + '</b><span>' + esc(r.lastMissInc || '') + '. It doesn’t count against you.</span></div>' +
+        '<div class="tile"><h3>All good?</h3><p>The last 3 callouts went by, which happens. Are you still free for callouts? Nothing comes off your score either way.</p></div>' +
+        '<div class="actions"><button type="button" class="btn dark" data-action="here" ' + w + '>I’m here</button>' +
+        '<button type="button" class="btn light" data-action="offduty" ' + w + '>Going off duty</button></div>';
+      return h;
+    }
+
+    if (!r.onDuty) {
+      h += '<div class="notice grey"><b>' + awayText(r) + '</b><span>No pings until you’re back' +
+        (r.away && r.away.kind === 'break' ? ' (' + minsLeft(r) + ' min left). You’ll be back on duty automatically' : '') +
+        '. Your score is untouched.</span></div>' +
+        '<div class="actions"><button type="button" class="btn dark" data-action="backon" ' + w + '>Back on duty now</button>' +
+        (r.away && r.away.kind === 'break' ? '<button type="button" class="btn light" data-action="avail" ' + w + '>Change break</button>' : '') + '</div>';
+      return h;
+    }
+
+    if (r.screen === 'missed' && after()) {
+      h += '<div class="notice warm"><b>Missed callout · ' + esc(r.lastMiss || clock()) + '</b><span>' + esc(r.lastMissInc || '') + '. It doesn’t count against you.</span></div>';
+    } else if (r.screen === 'gone' && !after()) {
+      h += '<div class="notice grey"><b>Callout no longer available</b><span>&nbsp;</span></div>';
+    } else if (r.screen === 'taken' && c) {
+      h += '<div class="notice good"><b>' + (after() ? 'It’s yours · callout #' + c.n : 'Accepted') + '</b><span>' + (after() ? 'Eastgate · Kip can see you’re on it.' : '&nbsp;') + '</span></div>';
+    } else if (r.screen === 'declined') {
+      h += '<div class="notice grey"><b>Turned down</b><span>' + (after() ? 'Offered to the next responder.' +
+        (r.askWhy ? ' Why? Optional, one tap:' : r.lastReason ? ' You said: ' + esc(r.lastReason) + '.' : '') : '&nbsp;') + '</span>' +
+        (r.askWhy ? whyChips(name, 'btn light') : '') + '</div>';
+    }
+    if (r.note) h += '<div class="notice good"><b>' + esc(r.note) + '</b></div>';
+
+    if (after()) {
+      h += '<div class="tile"><h3>Your week</h3><p>' + weekTile(name) + '</p></div>' +
+        '<div class="tile"><h3>Your answers</h3><p>You took ' + r.hist.slice(-10).filter(Boolean).length + ' of your last 10. Missed pings don’t count.</p></div>';
+    } else {
+      h += '<div class="tile"><h3>Waiting for callouts</h3><p>&nbsp;</p></div>';
+    }
+    return h;
+  }
+
+  function scoreRow(r) {
+    const now = share(r), diff = now - r.lastWeek;
+    const change = Math.abs(diff) < 0.005 ? '<span class="delta flat">no change</span>'
+      : diff > 0 ? '<span class="delta up">▲ ' + diff.toFixed(2) + '</span>'
+      : '<span class="delta down">▼ ' + (-diff).toFixed(2) + '</span>';
+    return '<div class="scores hood">' +
+      '<div><span class="slabel">Score now</span><span class="sval">' + now.toFixed(2) + '</span></div>' +
+      '<div><span class="slabel">Last week</span><span class="sval muted">' + r.lastWeek.toFixed(2) + '</span></div>' +
+      '<div><span class="slabel">Change</span>' + change + '</div></div>';
+  }
+
+  function cardHTML(name) {
+    const r = S.resp[name];
+    if (!after()) {
+      return '<div class="rcard"><div class="rtop"><span class="rname">' + name + '</span></div>' +
+        '<div class="big">' + r.pings + ' <small>pings this week</small></div>' +
+        (r.onDuty ? '' : '<p class="fine">Not available</p>') + '</div>';
+    }
+    const quiet = r.onDuty && r.pings < r.usual / 2, busy = r.onDuty && r.pings > r.usual * 1.3;
+    let reason;
+    if (!r.onDuty) reason = awayText(r) + ', set by ' + SHORT[name] + '. Not being pinged.';
+    else if (r.streak >= 3) reason = 'Missed ' + r.streak + ' in a row. Asked ' + SHORT[name] + ' to confirm on duty.';
+    else if (r.streak > 0) reason = 'Missed ' + r.streak + ' in a row. No penalty.';
+    else if (quiet) reason = 'Fewer pings after missed pings in August. Score has been reset.';
+    else if (busy) reason = 'Covering most of Eastgate this week.';
+    else reason = 'On their usual pace.';
+    const tag = !r.onDuty ? '<span class="tag" style="color:#545B69">' + awayShort(r) + '</span>'
+      : r.streak >= 3 ? '<span class="tag" style="color:#C2410C">Check in</span>'
+      : quiet ? '<span class="tag" style="color:#C2410C">Quiet</span>'
+      : busy ? '<span class="tag" style="color:#1D4ED8">Busy</span>' : '<span class="tag" style="color:#15803D">Normal</span>';
+    return '<div class="rcard ' + (!r.onDuty ? 'offduty' : quiet ? 'quiet' : busy ? 'busy' : '') + '">' +
+      '<div class="rtop"><span class="rname">' + name + '</span>' + tag + '</div>' +
+      '<div class="big">' + r.pings + ' <small>pings this week · usually ~' + r.usual + '</small></div>' +
+      '<p class="reason">' + reason + '</p>' +
+      scoreRow(r) +
+      '<p class="fine">Took ' + r.hist.slice(-10).filter(Boolean).length + ' of their last 10' +
+      (r.lastReason ? ' · last turn-down: ' + esc(r.lastReason.toLowerCase()) : '') + '</p>' +
+      (r.reported
+        ? '<p class="fine reported">Problem reported. Support has this card’s pings, misses and ranking; the reply will appear here.</p>'
+        : '<button type="button" class="linkbtn" data-action="report" data-who="' + name + '">Something wrong? Report it</button>') +
+      '</div>';
+  }
+
+  function consoleHTML() {
+    const c = S.callout, busyNow = c && c.phase === 'pinging';
+    let h = '<div class="conhead"><h2>Eastgate · Kip</h2><div class="controls">' +
+      '<button type="button" class="cbtn" data-action="send"' + (busyNow ? ' disabled' : '') + '>Send a callout</button>' +
+      '<button type="button" class="cbtn alt dev" data-action="runout"' + (busyNow ? '' : ' disabled') + '>' +
+      (busyNow ? 'Let ' + (c.aidCurrent || SHORT[c.current]) + '’s ping run out' : 'Let it run out') + '</button>' +
+      '<button type="button" class="cbtn alt dev" data-action="skip30"' + (busyNow && c.left > urgentAt(c) ? '' : ' disabled') + '>Skip to last ' + (busyNow ? urgentAt(c) : Math.min(30, Math.floor(waitSetting / 2))) + 's</button>' +
+      '</div></div>';
+
+    let line;
+    if (!c) line = '<span>No callout in progress.</span>';
+    else if (c.phase === 'pinging' && c.aidCurrent) {
+      const x = nearby(c.aidCurrent), nx = c.aidQueue.slice(c.aidIdx + 1).find((n) => S.aidAvail[n]);
+      line = '<span class="dot" style="background:#7C3AED"></span><span><b>Callout #' + c.n + '</b> · ' + esc(c.inc.title) +
+        ' · <b>Nobody in Eastgate</b> · Pinging ' + x.name + ' (' + x.area + ', ' + x.min + ' min away) · ' + c.left + 's left · next: ' + (nx || 'none') + '</span>';
+    }
+    else if (c.phase === 'pinging') {
+      if (after()) {
+        const next = c.queue[c.idx + 1];
+        line = '<span class="dot" style="background:' + (c.current === MITE ? '#C2410C' : '#1D4ED8') + '"></span><span><b>Callout #' + c.n + '</b> · ' +
+          esc(c.inc.title) + ' · ' + (c.round === 2 ? 'Second round · ' : '') + 'Pinging ' + c.current + ' · ' + c.left + 's left' +
+          ' of ' + c.wait + 's' + (c.left <= urgentAt(c) ? ' · <b>phone re-alerted</b>' : '') + ' · next: ' +
+          (next || (c.round === 1 ? 'second round for anyone who missed' : 'none')) + '</span>';
+      } else {
+        line = '<span class="dot" style="background:#545B69"></span><span><b>Callout #' + c.n + '</b> · Waiting for a responder</span>';
+      }
+    } else if (c.phase === 'taken') {
+      line = '<span class="dot" style="background:#15803D"></span><span><b>Callout #' + c.n + '</b> · Taken by ' + c.by + '</span>';
+    } else {
+      line = '<span class="dot" style="background:#C2410C"></span><span><b>Callout #' + c.n + '</b> · ' + esc(c.inc.title) + ' · Unserved' + (after() ? '. ' + esc(c.why) : '') + '</span>';
+    }
+    const hot = after() && c && c.phase === 'pinging' && c.left <= urgentAt(c);
+    h += '<div class="status' + (hot ? ' urgent' : '') + '" role="status">' + line + '</div>';
+    h += '<div class="cards">' + cardHTML(MITE) + cardHTML(GALE) + '</div>';
+    h += rankHTML();
+    h += aidHTML();
+    // One "needs attention" strip instead of several banners, so Kip isn't flooded.
+    if (after()) {
+      const items = [];
+      const low = NAMES.filter((n) => S.resp[n].onDuty && S.resp[n].pings < S.resp[n].usual / 2);
+      const high = NAMES.filter((n) => S.resp[n].onDuty && S.resp[n].pings > S.resp[n].usual * 1.3);
+      low.forEach((n) => items.push(n + ' is below half their usual pings this week.'));
+      if (low.length && high.length) items.push(high.join(', ') + ' is carrying the work ' + low.join(', ') + ' would usually get.');
+      NAMES.filter((n) => S.resp[n].onDuty && S.resp[n].streak >= 3).forEach((n) => items.push(n + ' has missed 3 in a row; their phone has asked if they’re still free.'));
+      if (!NAMES.some((n) => S.resp[n].onDuty)) items.push('Nobody in Eastgate is on duty. New callouts go to the nearest available responder outside Eastgate.');
+      if (items.length) h = h.replace('<div class="cards">', '<div class="banner attn" role="status"><b>Needs attention</b><ul>' +
+        items.map((x) => '<li>' + esc(x) + '</li>').join('') + '</ul></div><div class="cards">');
+    }
+    return h;
+  }
+
+  // ---- routing priority: who is asked first for the next callout ----
+  // Live weights from config.py (4.2): proximity 0.60, recent acceptance 0.25, capability 0.15.
+  // Travel times are illustrative; anyone 45+ minutes away scores 0 on proximity.
+  const W = { prox: 0.60, acc: 0.25, cap: 0.15 };
+  const TRAVEL = { [MITE]: 4, [GALE]: 14 };
+  const accOf = (r) => (after() ? share(r) : r.pts);
+
+  // After only: a small workload term, so one responder isn't asked for everything while another goes quiet.
+  // Up to -0.10 for someone at double their usual pings this week.
+  const W_LOAD = 0.10;
+  const loadOf = (r) => (after() ? Math.max(0, Math.min(1, r.pings / r.usual - 1)) : 0);
+
+  function ranking() {
+    return NAMES.map((n) => {
+      const r = S.resp[n];
+      const prox = Math.max(0, 1 - TRAVEL[n] / 45), acc = accOf(r), cap = 1, load = loadOf(r);
+      return { name: n, onDuty: r.onDuty, prox, acc, cap, load,
+        parts: [W.prox * prox, W.acc * acc, W.cap * cap],
+        total: W.prox * prox + W.acc * acc + W.cap * cap - W_LOAD * load };
+    }).sort((a, b) => (b.onDuty - a.onDuty) || (b.total - a.total));
+  }
+
+  // Plain-language reason for each place in the order: the biggest single difference between #1 and #2.
+  function rankReasons(rows) {
+    const on = rows.filter((x) => x.onDuty), out = {};
+    rows.filter((x) => !x.onDuty).forEach((x) => { out[x.name] = awayText(S.resp[x.name]) + '. Not asked.'; });
+    if (!on.length) return out;
+    if (on.length === 1) { out[on[0].name] = 'Asked first: the only one on duty.'; return out; }
+    const [a, b] = on;
+    const diffs = [
+      { k: 'prox', v: W.prox * (a.prox - b.prox) },
+      { k: 'acc', v: W.acc * (a.acc - b.acc) },
+      { k: 'load', v: W_LOAD * (b.load - a.load) }
+    ].sort((x, y) => y.v - x.v);
+    const k = diffs[0].k, ra = S.resp[a.name], rb = S.resp[b.name];
+    const win = { prox: 'closest, ' + TRAVEL[a.name] + ' min away', acc: after() ? 'says yes more often lately' : 'more acceptance points', load: 'fewer pings this week' }[k];
+    const lose = {
+      prox: 'further away, ' + TRAVEL[b.name] + ' min',
+      acc: after() ? 'says yes less often lately' : 'fewer acceptance points' + (rb.pts < 0.5 ? ', lost after missed pings' : ''),
+      load: 'busy week, ' + rb.pings + ' pings against a usual ' + rb.usual
+    }[k];
+    out[a.name] = 'Asked first: ' + win + '.';
+    out[b.name] = 'Asked if ' + SHORT[a.name] + ' doesn’t take it: ' + lose + '.';
+    return out;
+  }
+
+  // Notice when the order for the next callout changes, and say why.
+  function trackRank() {
+    const order = ranking().filter((x) => x.onDuty).map((x) => x.name);
+    const key = order.join('>');
+    if (S.rankKey && S.rankKey !== key && order.length) {
+      const prev = S.rankKey.split('>');
+      S.moves = {};
+      order.forEach((n, i) => { const was = prev.indexOf(n); if (was >= 0 && was !== i) S.moves[n] = i < was ? 'up' : 'down'; });
+      const fell = order.find((n) => S.moves[n] === 'down');
+      log('Ranking changed: ' + order[0] + ' is now asked first for the next callout' +
+        (fell ? '. ' + fell + ' drops to #' + (order.indexOf(fell) + 1) + (after() ? '.' : ' after losing points.') : '.'), after() ? '' : 'bad');
+    }
+    S.rankKey = key;
+  }
+
+  function rankHTML() {
+    const rows = ranking(), why = rankReasons(rows);
+    let h = '<div class="rank"><div><h3>Next callout: who’s asked first</h3>' +
+      (after() ? '' : '<p class="fine"><b>Kip can’t see this today.</b> Shown here so you can see what happens underneath.</p>') +
+      '<p class="fine hood">Priority = 0.60 × distance + 0.25 × ' + (after() ? 'acceptance share' : 'acceptance points') + ' + 0.15 × capability' +
+      (after() ? ' − 0.10 × extra load this week' : '') + '. Updates on every take, turn-down and miss.</p></div>';
+    let pos = 0;
+    rows.forEach((x) => {
+      const rank = x.onDuty ? '#' + (++pos) : '–';
+      const mv = S.moves && S.moves[x.name];
+      const badge = mv === 'up' ? '<span class="move up">▲ moved up</span>' : mv === 'down' ? '<span class="move down">▼ moved down</span>' : '';
+      const w = (v) => (v * 100).toFixed(1) + '%';
+      h += '<div class="rankrow' + (x.onDuty && pos === 1 ? ' first' : '') + (x.onDuty ? '' : ' off') + '">' +
+        '<span class="rnum">' + rank + '</span>' +
+        '<span class="rname">' + x.name + badge + '</span>' +
+        '<span class="rtot hood">' + x.total.toFixed(2) + '</span>' +
+        '<span class="rwhy">' + esc(why[x.name] || '') + '</span>' +
+        '<span class="rparts hood">Distance ' + TRAVEL[x.name] + ' min → ' + x.prox.toFixed(2) + ' · Acceptance ' + x.acc.toFixed(2) +
+        (x.load > 0 ? ' · Extra load −' + (W_LOAD * x.load).toFixed(2) : '') + ' · Flight ✓</span>' +
+        '<div class="rbar hood" aria-hidden="true"><span style="width:' + w(x.parts[0]) + ';background:#7A8396"></span>' +
+        '<span style="width:' + w(x.parts[1]) + ';background:' + (x.name === MITE ? '#C2410C' : '#1D4ED8') + '"></span>' +
+        '<span style="width:' + w(x.parts[2]) + ';background:#B7BCC7"></span></div></div>';
+    });
+    return h + '</div>';
+  }
+
+  function aidHTML() {
+    const c = S.callout;
+    let h = '<div class="rank"><div><h3>Nearest available outside Eastgate</h3><p class="fine">' +
+      (after() ? 'If nobody in Eastgate is on duty, the callout passes to these responders, closest first. Their own handler is told too. Tap a name’s status to make them unavailable.'
+        : '<b>Not supported today.</b> If nobody in Eastgate is on duty, the callout goes unserved.') +
+      ' Travel times are illustrative.</p></div>';
+    NEARBY.slice().sort((a, b) => a.min - b.min).forEach((x) => {
+      const pinged = c && c.phase === 'pinging' && c.aidCurrent === x.name, avail = S.aidAvail[x.name];
+      const w = 'data-who="' + x.name + '"';
+      h += '<div class="aidrow' + (pinged ? ' live' : '') + '">' +
+        '<div><span class="rname">' + x.name + '</span><span class="fine">' + x.area + ' · ' + x.min + ' min away · handler ' + x.handler + '</span></div>' +
+        (pinged
+          ? '<div class="aidbtns"><span class="fine"><b>' + c.left + 's</b> left</span>' +
+            '<button type="button" class="cbtn" data-action="aidtake" ' + w + '>Takes it</button>' +
+            '<button type="button" class="cbtn alt" data-action="aiddecline" ' + w + '>Turns down</button></div>'
+          : '<button type="button" class="avail ' + (avail ? 'yes' : 'no') + '" data-action="aidavail" ' + w + (after() ? '' : ' disabled') + '>' + (avail ? 'Available' : 'Unavailable') + '</button>') +
+        '</div>';
+    });
+    return h + '</div>';
+  }
+
+  function hoodHTML() {
+    return NAMES.map((n) => {
+      const r = S.resp[n];
+      return '<tr><td>' + n + '</td><td class="num">' + (after() ? share(r).toFixed(2) : r.pts.toFixed(2)) + '</td><td>' +
+        (after() ? 'Share of answered pings taken; misses left out' : 'Points: +0.08 yes, −0.12 no, −0.12 per miss from the 3rd in a row') + '</td></tr>';
+    }).join('');
+  }
+
+  function setWait(v) {
+    if (!Number.isFinite(v)) return;
+    waitSetting = Math.max(10, Math.min(300, Math.round(v)));
+    const c = S.callout;
+    log('Ping wait set to ' + waitSetting + 's' + (c && c.phase === 'pinging' ? '. The ping in progress keeps its ' + c.wait + 's; the next ping uses ' + waitSetting + 's.' : '.'));
+  }
+
+  // ---- full cycle auto-play: four callouts through both phones ----
+  let play = null;
+  const pingingNow = (n) => S.callout && S.callout.phase === 'pinging' && (!n || S.callout.current === n);
+  const say = (text) => { $('caption').innerHTML = text; log('▶ ' + text.replace(/<[^>]+>/g, ''), 'story'); };
+  const runOut = (n) => { if (pingingNow(n)) miss(n); };
+  const toUrgent = () => { const c = S.callout; if (pingingNow() && c.left > urgentAt(c)) { c.left = urgentAt(c); reAlert(c); } };
+
+  function cycleSteps() {
+    const steps = [
+      () => say('<b>Callout 1.</b> A flight callout comes in for Eastgate. Kip’s console pings Meteor Mite first: nearest.'),
+      () => sendCallout(),
+      () => { say('Mite’s phone has been ringing a while. ' + (after() ? 'Near the end, it alerts again and pulses.' : 'Today there’s no second alert.')); toUrgent(); },
+      () => { say('Mite doesn’t get to it in time: a <b>missed ping</b>. ' + (after() ? 'It doesn’t count against Mite.' : 'One miss costs nothing today either.')); runOut(MITE); },
+      () => say('The callout moves to The Gale’s phone.'),
+      () => { say('The Gale <b>takes it</b>, and is now on ' + S.resp[GALE].pings + ' pings this week against a usual ~13.'); if (pingingNow(GALE)) take(GALE); },
+      () => say('<b>Callout 2.</b> Another one, and Mite is asked first again.'),
+      () => sendCallout(),
+      () => { toUrgent(); say('Mite’s phone again. Still no answer.'); },
+      () => { runOut(MITE); say('Mite misses a <b>second</b> time in a row.'); },
+      () => { say('The Gale is stretched thin and <b>turns it down</b>.'); if (pingingNow(GALE)) decline(GALE); }
+    ];
+    if (after()) {
+      steps.push(
+        () => say('Nobody took it, so it goes back <b>once more</b> to whoever missed it: Mite’s phone shows "Still open".'),
+        () => toUrgent(),
+        () => { runOut(MITE); say('Mite misses it again: <b>three in a row</b>. Instead of marking Mite down, the phone asks, kindly, whether Mite is still free, and Kip’s card says why.'); },
+        () => { if (S.resp[MITE].screen === 'duty') { S.resp[MITE].streak = 0; S.resp[MITE].screen = 'idle'; S.resp[MITE].note = 'Thanks. You’re on duty.'; log('Mite tapped “I’m here”. Miss run reset, nothing taken off.', 'good'); } say('Mite taps <b>I’m here</b>. The miss run resets and nothing is taken off the score.'); },
+        () => say('<b>Callout 3.</b> Mite is still first in line, because the misses didn’t sink the score.'),
+        () => sendCallout(),
+        () => { toUrgent(); say('This time the second alert does its job.'); },
+        () => { if (pingingNow(MITE)) take(MITE); say('Mite <b>takes it</b>. Mite’s score goes up, and Kip sees the change against last week.'); }
+      );
+    } else {
+      steps.push(
+        () => say('The callout goes <b>unserved</b>. Today there’s no second round.'),
+        () => say('<b>Callout 3.</b> Mite is asked first again.'),
+        () => sendCallout(),
+        () => { runOut(MITE); say('Mite misses a <b>third</b> time in a row: −0.12 points, silently. Nobody tells Mite or Kip.'); },
+        () => { if (pingingNow(GALE)) take(GALE); say('The Gale takes it, again.'); }
+      );
+    }
+    steps.push(
+      () => { const top = ranking().filter((x) => x.onDuty)[0].name;
+        say('<b>Callout 4.</b> Look at the ranking on Kip’s console: ' + (top === MITE ? 'Mite is still <b>#1</b>.' : '<b>The Gale is now #1</b>. Mite’s silent penalty has pushed Mite down to #2.')); },
+      () => sendCallout(),
+      () => { if (pingingNow(MITE)) { decline(MITE); say('Mite is busy and <b>turns it down</b>: an answer, so it counts as a no.'); }
+        else if (pingingNow(GALE)) { take(GALE); say('The Gale takes it. <b>Mite isn’t even asked</b>. This is how a responder goes quiet.'); } },
+      () => { if (pingingNow(GALE)) { take(GALE); say('The Gale takes it.'); } },
+      () => { stopCycle(null); say('<b>Cycle complete.</b> Mite: ' + S.resp[MITE].pings + ' pings this week. The Gale: ' + S.resp[GALE].pings + '. ' +
+        (after() ? 'Mite’s score moved only on real answers, and both phones and Kip’s console said what was happening at every step.' :
+          'Mite lost points without anyone being told, and Kip’s console only showed ping counts.') + ' Switch version or ping wait and play it again.'); }
+    );
+    return steps;
+  }
+
+  function startCycle() {
+    stopCycle(null);
+    const mode = S.mode;
+    S = fresh(mode);
+    log('Full cycle started: ' + (after() ? 'After (proposed)' : 'Today (24 Oct rule)') + ', ' + waitSetting + 's ping wait.');
+    play = { steps: cycleSteps(), i: 0, timer: null };
+    const next = () => {
+      if (!play) return;
+      const step = play.steps[play.i++];
+      if (step) step();
+      render();
+      if (play && play.i < play.steps.length) play.timer = setTimeout(next, 2600);
+    };
+    next();
+  }
+
+  function stopCycle(msg) {
+    if (play) { clearTimeout(play.timer); play = null; }
+    if (msg) $('caption').textContent = msg;
+  }
+
+  function render() {
+    trackRank();
+    document.body.className = 'view-' + view + (hoodOn && view === 'sandbox' ? ' hood-on' : '');
+    $('v-story').setAttribute('aria-pressed', String(view === 'story'));
+    $('v-sandbox').setAttribute('aria-pressed', String(view === 'sandbox'));
+    $('hood-toggle').checked = hoodOn;
+    $('m-today').setAttribute('aria-pressed', String(S.mode === 'today'));
+    $('m-after').setAttribute('aria-pressed', String(S.mode === 'after'));
+    $('w-60').setAttribute('aria-pressed', String(waitSetting === 60));
+    $('w-90').setAttribute('aria-pressed', String(waitSetting === 90));
+    if (document.activeElement !== $('wait-input')) $('wait-input').value = waitSetting;
+    $('play').disabled = !!play;
+    $('stop').disabled = !play;
+    $('modenote').textContent = after()
+      ? 'After: clear alerts with a sound per responder, misses don’t count, Rook asks before assuming, and Kip sees why.'
+      : 'Today: 90s wait and misses scored separately, but nobody sees what’s happening.';
+    $('phone-mite').innerHTML = phoneHTML(MITE);
+    $('phone-gale').innerHTML = phoneHTML(GALE);
+    $('phone-mite').className = 'screen' + (S.resp[MITE].locked ? ' locked' : '');
+    $('phone-gale').className = 'screen' + (S.resp[GALE].locked ? ' locked' : '');
+    $('lockbar-mite').innerHTML = lockbarHTML(MITE);
+    $('lockbar-gale').innerHTML = lockbarHTML(GALE);
+    $('console').innerHTML = consoleHTML();
+    $('hood').innerHTML = hoodHTML();
+    $('log').innerHTML = S.log.length
+      ? S.log.map((e) => '<li class="' + e.kind + '"><span class="t">' + e.t + '</span>' + esc(e.text) + '</li>').join('')
+      : '<li>Nothing yet. Press <b>Send a callout</b>.</li>';
+  }
+
+  // Near the end of the wait the phone alerts again (After only), so a missed first buzz isn't the end of it.
+  function reAlert(c) {
+    if (!after() || !c.current || c.reAlerted === c.current + c.round) return;
+    c.reAlerted = c.current + c.round;
+    beep(c.current); setTimeout(() => beep(c.current), 250);
+    log(urgentAt(c) + ' seconds left: ' + c.current + '’s phone alerts again and starts pulsing.');
+  }
+
+  // ---- availability: on duty, on a break for a set time, or off for the rest of the day ----
+  const hhmm = (t) => new Date(t).toTimeString().slice(0, 5);
+  const minsLeft = (r) => Math.max(1, Math.ceil((r.away.until - Date.now()) / 60000));
+  function awayText(r) {
+    if (!r.away) return 'Off duty';
+    if (r.away.kind === 'break') return 'On break until ' + hhmm(r.away.until);
+    if (r.away.kind === 'day') return 'Off for the rest of the day';
+    return 'Off duty';
+  }
+  function awayShort(r) {
+    if (!r.away) return 'Off duty';
+    return r.away.kind === 'break' ? 'On break' : r.away.kind === 'day' ? 'Off today' : 'Off duty';
+  }
+  function setAway(name, kind, mins) {
+    const r = S.resp[name];
+    r.onDuty = false; r.picking = false; r.screen = 'idle'; r.note = null;
+    r.away = { kind, until: mins ? Date.now() + mins * 60000 : null };
+    log(name + ': ' + awayText(r) + '. Availability updated; Kip’s card and the ranking show it. Score untouched.');
+  }
+  function backOn(name, note) {
+    const r = S.resp[name];
+    r.onDuty = true; r.away = null; r.picking = false; r.screen = 'idle'; r.note = note;
+    log(name + ' is back on duty.', 'good');
+  }
+
+  function tick() {
+    NAMES.forEach((n) => {
+      const r = S.resp[n];
+      if (r.away && r.away.kind === 'break' && Date.now() >= r.away.until) { backOn(n, 'Break over. You’re back on duty.'); render(); }
+    });
+    const c = S.callout;
+    if (c && c.phase === 'pinging' && (c.current || c.aidCurrent)) {
+      c.left -= 1;
+      if (c.left === urgentAt(c)) reAlert(c);
+      if (c.left <= 0) {
+        if (c.aidCurrent) aidAnswer('miss');
+        else { log(c.current + ' didn’t answer within ' + c.wait + 's.'); miss(c.current); }
+      }
+      render();
+    }
+  }
+
+  document.addEventListener('click', (ev) => {
+    const el = ev.target.closest('[data-action]');
+    if (!el) return;
+    const a = el.dataset.action, c = S.callout, who = el.dataset.who;
+    const pinged = (n) => c && c.phase === 'pinging' && c.current === n;
+    if (a === 'mode') { stopCycle(null); S = fresh(el.dataset.mode); log(after() ? 'Switched to After (proposed).' : 'Switched to Today (24 Oct rule).'); }
+    else if (a === 'reset') { stopCycle(null); S = fresh(S.mode); }
+    else if (a === 'send') sendCallout();
+    else if (a === 'runout' && c && c.phase === 'pinging') { if (c.aidCurrent) aidAnswer('miss'); else miss(c.current); }
+    else if ((a === 'aidtake' || a === 'aiddecline') && c && c.phase === 'pinging' && c.aidCurrent === who) aidAnswer(a === 'aidtake' ? 'take' : 'decline');
+    else if (a === 'aidavail' && who) { S.aidAvail[who] = !S.aidAvail[who]; log(who + ' is now ' + (S.aidAvail[who] ? 'available' : 'unavailable') + ' in ' + nearby(who).area + '.'); }
+    else if (a === 'skip30' && c && c.phase === 'pinging' && c.left > urgentAt(c)) { c.left = urgentAt(c); reAlert(c); }
+    else if (a === 'wait') setWait(Number(el.dataset.wait));
+    else if (a === 'play') startCycle();
+    else if (a === 'stop') stopCycle('Stopped.');
+    else if (a === 'take' && pinged(who)) take(who);
+    else if (a === 'decline' && pinged(who)) decline(who);
+    else if (a === 'here' && who) { const r = S.resp[who]; r.streak = 0; r.screen = 'idle'; r.note = 'Thanks. You’re on duty.'; log(who + ' tapped “I’m here”. Miss run reset, nothing taken off.', 'good'); }
+    else if (a === 'offduty' && who) { S.resp[who].streak = 0; setAway(who, 'off'); }
+    else if (a === 'backon' && who) backOn(who, 'Welcome back. You’re on duty.');
+    else if (a === 'avail' && who && !pinged(who)) { S.resp[who].picking = !S.resp[who].picking; }
+    else if (a === 'break' && who) setAway(who, 'break', Number(el.dataset.mins));
+    else if (a === 'restofday' && who) setAway(who, 'day');
+    else if (a === 'view') { view = el.dataset.view; if (view === 'story') hoodOn = false; }
+    else if (a === 'hood') { hoodOn = el.checked; }
+    else if (a === 'why' && who) { const r = S.resp[who]; r.lastReason = el.dataset.reason; r.askWhy = false; log(who + ' said why: “' + r.lastReason + '”. Kip sees it; routing can learn from it.'); }
+    else if (a === 'report' && who) { S.resp[who].reported = true; log('Kip reported a problem on ' + who + '’s card. Sent to support with this week’s pings, misses and ranking attached.', 'good'); }
+    else if (a === 'lockset' && who) { S.resp[who].locked = el.dataset.lock === '1'; S.resp[who].picking = false; }
+    else if (a === 'unlock' && who) { S.resp[who].locked = false; if (pinged(who)) log(who + ' unlocks the phone to answer: ' + S.callout.left + 's left.'); }
+    else if (a === 'availlock' && who) { S.resp[who].locked = false; S.resp[who].picking = true; }
+    else return;
+    render();
+  });
+
+  $('wait-input').addEventListener('change', (ev) => { setWait(Number(ev.target.value)); render(); });
+
+  setInterval(tick, 1000);
+  render();
+})();
+</script>
+</body>
+</html>
