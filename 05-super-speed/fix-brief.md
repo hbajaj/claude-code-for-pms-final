@@ -1,6 +1,7 @@
 # Brief: when a responder goes quiet, nobody should have to guess why
 
 For Helen Achebe, Director of Product. From the Dispatch PM. 7 Nov 2026. A draft, not a slide.
+**Owner: Himanshu Bajaj, PM for Rook Dispatch.**
 Cc Wen Li (Staff Engineer), Marcus Oyelaran (Engineering Manager), Sofia Marino (Product Designer).
 
 ## What you asked for

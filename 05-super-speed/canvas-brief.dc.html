@@ -1,0 +1,462 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Quiet responders brief</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap">
+<style>
+body{margin:0;background:#F6F5F1}
+a{color:#1D4ED8}a:hover{color:#1E3A8A}
+</style>
+</helmet>
+<main style="background: #F6F5F1; color: #16181D; font-family: Inter, system-ui, sans-serif; font-size: 18px; line-height: 1.55">
+
+<header style="background: #16181D; color: #F6F5F1; padding: 88px 24px 80px">
+<div style="max-width: 1080px; margin: 0 auto; display: flex; flex-direction: column; gap: 28px">
+<p style="margin: 0; font-size: 14px; letter-spacing: 0.12em; text-transform: uppercase; color: #B7BCC7">Rook Dispatch · Brief for Helen Achebe, Director of Product · 7 Nov 2026 · Owner: Himanshu Bajaj, PM for Rook Dispatch</p>
+<h1 style="margin: 0; font-family: 'Space Grotesk', Inter, sans-serif; font-weight: 700; font-size: 60px; line-height: 1.05; max-width: 900px">When a responder goes quiet, nobody should have to guess why.</h1>
+<p style="margin: 0; font-size: 21px; color: #D9DCE2; max-width: 760px">After release 4.2, four responders stopped getting pings, and nobody could see why: not the responders, not their handlers. This is the story of one of them, and what we'd build so it can't happen silently again.</p>
+<div style="display: flex; flex-wrap: wrap; gap: 16px; margin-top: 8px">
+<div style="flex: 1 1 220px; border: 1px solid #3A3F4A; border-radius: 12px; padding: 20px">
+<p style="margin: 0 0 6px; font-size: 13px; text-transform: uppercase; letter-spacing: 0.08em; color: #B7BCC7">Already fixed</p>
+<p style="margin: 0; font-size: 17px">Since 24 Oct the ping wait is back to 90 seconds and misses no longer count as a "no".</p>
+</div>
+<div style="flex: 1 1 220px; border: 1px solid #3A3F4A; border-radius: 12px; padding: 20px">
+<p style="margin: 0 0 6px; font-size: 13px; text-transform: uppercase; letter-spacing: 0.08em; color: #B7BCC7">Still missing</p>
+<p style="margin: 0; font-size: 17px">Nobody can see what's happening. A number fixed the code, not the experience.</p>
+</div>
+<div style="flex: 1 1 220px; border: 1px solid #F59E6B; border-radius: 12px; padding: 20px">
+<p style="margin: 0 0 6px; font-size: 13px; text-transform: uppercase; letter-spacing: 0.08em; color: #F59E6B">The ask</p>
+<p style="margin: 0; font-size: 17px">OK for Sofia to design eight changes and Wen to scope them, plus a new score for 4.3.</p>
+</div>
+</div>
+</div>
+</header>
+
+<section style="padding: 80px 24px; border-bottom: 1px solid #DEDBD3">
+<div style="max-width: 1080px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px">
+<p style="margin: 0; font-size: 14px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #545B69">Chapter 1 · Same city, same handler</p>
+<h2 style="margin: 0; font-family: 'Space Grotesk', Inter, sans-serif; font-size: 40px; line-height: 1.15">Meteor Mite and The Gale had the same weeks. Then they didn't.</h2>
+<p style="margin: 0; max-width: 760px; color: #3A3F4A">Kip looks after two responders in Eastgate. Before 4.2 they got about the same number of pings. Within three weeks of the release, one phone went silent and the other wouldn't stop.</p>
+<div style="background: #FFFFFF; border: 1px solid #DEDBD3; border-radius: 16px; padding: 28px 24px 20px">
+<div style="display: flex; flex-wrap: wrap; gap: 24px; align-items: center; margin-bottom: 20px">
+<p style="margin: 0; font-weight: 600">Pings a week</p>
+<div style="display: flex; align-items: center; gap: 8px; font-size: 15px"><span style="width: 14px; height: 14px; border-radius: 3px; background: #C2410C"></span><span>Meteor Mite</span></div>
+<div style="display: flex; align-items: center; gap: 8px; font-size: 15px"><span style="width: 14px; height: 14px; border-radius: 3px; background: #1D4ED8"></span><span>The Gale</span></div>
+</div>
+<div style="display: flex; align-items: flex-end; gap: 6px; height: 220px; border-bottom: 1px solid #DEDBD3">
+<sc-for list="{{weeks}}" as="w" hint-placeholder-count="10">
+<div style="flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; gap: 6px; {{w.bg}}">
+<div style="display: flex; align-items: flex-end; gap: 3px; width: 100%; justify-content: center">
+<div style="display: flex; flex-direction: column; align-items: center; gap: 2px; flex: 0 1 22px; min-width: 0">
+<span style="font-size: 12px; color: #C2410C; font-weight: 600">{{w.mite}}</span>
+<div style="width: 100%; border-radius: 3px 3px 0 0; background: #C2410C; {{w.miteH}}"></div>
+</div>
+<div style="display: flex; flex-direction: column; align-items: center; gap: 2px; flex: 0 1 22px; min-width: 0">
+<span style="font-size: 12px; color: #1D4ED8; font-weight: 600">{{w.gale}}</span>
+<div style="width: 100%; border-radius: 3px 3px 0 0; background: #1D4ED8; {{w.galeH}}"></div>
+</div>
+</div>
+</div>
+</sc-for>
+</div>
+<div style="display: flex; gap: 6px; margin-top: 8px">
+<sc-for list="{{weeks}}" as="w" hint-placeholder-count="10">
+<div style="flex: 1 1 0; min-width: 0; text-align: center; font-size: 12px; color: #545B69; line-height: 1.3">
+<div>{{w.label}}</div>
+<div style="color: #C2410C; font-weight: 600">{{w.tag}}</div>
+</div>
+</sc-for>
+</div>
+<p style="margin: 16px 0 0; font-size: 14px; color: #545B69">Week starting. 4.2 shipped 12 Aug. Source: rook-database pings, 29 Jun–6 Sep 2026.</p>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 16px">
+<div style="flex: 1 1 240px; background: #FFFFFF; border: 1px solid #DEDBD3; border-radius: 12px; padding: 20px">
+<p style="margin: 0; font-family: 'Space Grotesk', Inter, sans-serif; font-size: 40px; font-weight: 700; color: #C2410C">11 → 1</p>
+<p style="margin: 4px 0 0; color: #3A3F4A">Meteor Mite's pings a week, before 4.2 vs the week of 31 Aug</p>
+</div>
+<div style="flex: 1 1 240px; background: #FFFFFF; border: 1px solid #DEDBD3; border-radius: 12px; padding: 20px">
+<p style="margin: 0; font-family: 'Space Grotesk', Inter, sans-serif; font-size: 40px; font-weight: 700; color: #1D4ED8">13 → 21</p>
+<p style="margin: 4px 0 0; color: #3A3F4A">The Gale's pings a week over the same weeks</p>
+</div>
+<div style="flex: 1 1 240px; background: #FFFFFF; border: 1px solid #DEDBD3; border-radius: 12px; padding: 20px">
+<p style="margin: 0; font-family: 'Space Grotesk', Inter, sans-serif; font-size: 40px; font-weight: 700">8 of 14</p>
+<p style="margin: 4px 0 0; color: #3A3F4A">pings Meteor Mite missed after 4.2</p>
+</div>
+</div>
+</div>
+</section>
+
+<section style="padding: 80px 24px; border-bottom: 1px solid #DEDBD3">
+<div style="max-width: 1080px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px">
+<p style="margin: 0; font-size: 14px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #545B69">Chapter 2 · How it happened</p>
+<h2 style="margin: 0; font-family: 'Space Grotesk', Inter, sans-serif; font-size: 40px; line-height: 1.15">A loop with no way out</h2>
+<p style="margin: 0; max-width: 760px; color: #3A3F4A">4.2 cut the time to answer a ping from 90 seconds to 60. Responders still decide in about 22 seconds, so the misses weren't slow decisions. They were alerts noticed too late.</p>
+<div style="display: flex; flex-wrap: wrap; align-items: stretch; gap: 12px">
+<sc-for list="{{loop}}" as="s" hint-placeholder-count="5">
+<div style="flex: 1 1 170px; display: flex; align-items: center; gap: 12px">
+<div style="flex: 1 1 auto; background: #FFFFFF; border: 1px solid #DEDBD3; border-radius: 12px; padding: 18px; min-height: 120px; box-sizing: border-box">
+<p style="margin: 0 0 6px; font-size: 13px; font-weight: 700; color: #C2410C">{{s.n}}</p>
+<p style="margin: 0; font-weight: 600; font-size: 17px; line-height: 1.35">{{s.title}}</p>
+<p style="margin: 6px 0 0; font-size: 15px; color: #545B69; line-height: 1.4">{{s.body}}</p>
+</div>
+<svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true" style="flex: 0 0 20px"><path d="M4 10h12M11 5l5 5-5 5" fill="none" stroke="#545B69" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+</div>
+</sc-for>
+</div>
+<div style="background: #FFF4EC; border: 1px solid #F3C6A8; border-radius: 12px; padding: 18px 20px">
+<p style="margin: 0; color: #7A2E0B"><strong>And back to step 1.</strong> The only way to earn points back was to take a ping, and a low score meant no pings came. The responders who sank didn't miss more than anyone else. They just got too few pings to climb back.</p>
+</div>
+</div>
+</section>
+
+<section style="padding: 80px 24px; border-bottom: 1px solid #DEDBD3">
+<div style="max-width: 1080px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px">
+<p style="margin: 0; font-size: 14px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #545B69">Chapter 3 · What each person saw</p>
+<h2 style="margin: 0; font-family: 'Space Grotesk', Inter, sans-serif; font-size: 40px; line-height: 1.15">Three people, three stories, no explanation</h2>
+<div style="display: flex; flex-wrap: wrap; gap: 16px">
+<div style="flex: 1 1 280px; background: #FFFFFF; border: 1px solid #DEDBD3; border-top: 4px solid #C2410C; border-radius: 12px; padding: 24px">
+<p style="margin: 0; font-size: 13px; text-transform: uppercase; letter-spacing: 0.08em; color: #545B69">Responder</p>
+<p style="margin: 4px 0 12px; font-family: 'Space Grotesk', Inter, sans-serif; font-size: 26px; font-weight: 700">Meteor Mite</p>
+<p style="margin: 0; color: #3A3F4A">A phone that stopped ringing. Kept texting Kip to ask whether something was broken.</p>
+</div>
+<div style="flex: 1 1 280px; background: #FFFFFF; border: 1px solid #DEDBD3; border-top: 4px solid #1D4ED8; border-radius: 12px; padding: 24px">
+<p style="margin: 0; font-size: 13px; text-transform: uppercase; letter-spacing: 0.08em; color: #545B69">Responder</p>
+<p style="margin: 4px 0 12px; font-family: 'Space Grotesk', Inter, sans-serif; font-size: 26px; font-weight: 700">The Gale</p>
+<p style="margin: 0; color: #3A3F4A">Picked up Mite's share of Eastgate as well as its own. In Kip's words, exhausted.</p>
+</div>
+<div style="flex: 1 1 280px; background: #FFFFFF; border: 1px solid #DEDBD3; border-top: 4px solid #16181D; border-radius: 12px; padding: 24px">
+<p style="margin: 0; font-size: 13px; text-transform: uppercase; letter-spacing: 0.08em; color: #545B69">Handler</p>
+<p style="margin: 4px 0 12px; font-family: 'Space Grotesk', Inter, sans-serif; font-size: 26px; font-weight: 700">Kip</p>
+<p style="margin: 0; color: #3A3F4A">Two coverage cards side by side telling opposite stories. All Kip could tell Mite was to hang in there.</p>
+</div>
+</div>
+<blockquote style="margin: 8px 0 0; padding: 24px 28px; background: #16181D; color: #F6F5F1; border-radius: 12px; font-family: 'Space Grotesk', Inter, sans-serif; font-size: 26px; line-height: 1.35">"I just want it to look less like a coincidence."<span style="display: block; margin-top: 10px; font-family: Inter, sans-serif; font-size: 15px; color: #B7BCC7">Kip, handler interview, 4 Sep 2026</span></blockquote>
+</div>
+</section>
+
+<section style="padding: 80px 24px; border-bottom: 1px solid #DEDBD3">
+<div style="max-width: 1080px; margin: 0 auto; display: flex; flex-direction: column; gap: 28px">
+<p style="margin: 0; font-size: 14px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #545B69">Chapter 4 · What we'd build</p>
+<h2 style="margin: 0; font-family: 'Space Grotesk', Inter, sans-serif; font-size: 40px; line-height: 1.15">The same week, if people could see what's happening</h2>
+<div style="display: flex; flex-wrap: wrap; gap: 28px; justify-content: center; align-items: flex-start">
+
+<div style="flex: 0 1 300px; display: flex; flex-direction: column; gap: 10px; align-items: center">
+<div style="width: 280px; height: 560px; border-radius: 40px; background: #16181D; padding: 12px; box-sizing: border-box">
+<div style="height: 100%; border-radius: 30px; background: #FFFFFF; padding: 28px 20px; box-sizing: border-box; display: flex; flex-direction: column; gap: 14px">
+<p style="margin: 0; font-size: 13px; font-weight: 600; color: #545B69">Rook Dispatch</p>
+<div style="background: #FFF4EC; border-radius: 14px; padding: 16px">
+<p style="margin: 0; font-size: 13px; font-weight: 700; color: #C2410C">Missed callout · 23:40</p>
+<p style="margin: 6px 0 0; font-size: 15px; font-weight: 600; line-height: 1.35">Eastgate · flight</p>
+<p style="margin: 8px 0 0; font-size: 14px; color: #3A3F4A; line-height: 1.4">It doesn't count against you.</p>
+</div>
+<div style="background: #F6F5F1; border-radius: 14px; padding: 16px; display: flex; flex-direction: column; gap: 10px">
+<p style="margin: 0; font-size: 16px; font-weight: 700">Still on duty?</p>
+<p style="margin: 0; font-size: 13px; color: #545B69; line-height: 1.4">You've missed 3 in a row. Let us know so we don't guess.</p>
+<button type="button" style="min-height: 44px; border: 0; border-radius: 10px; background: #16181D; color: #FFFFFF; font: 600 15px Inter, sans-serif">I'm here</button>
+<button type="button" style="min-height: 44px; border: 1px solid #C9C5BB; border-radius: 10px; background: #FFFFFF; color: #16181D; font: 600 15px Inter, sans-serif">Going off duty</button>
+</div>
+<div style="background: #F6F5F1; border-radius: 14px; padding: 16px">
+<p style="margin: 0; font-size: 13px; font-weight: 700">Your week</p>
+<p style="margin: 6px 0 0; font-size: 14px; color: #3A3F4A; line-height: 1.4">4 pings so far. You usually get about 11. Fewer callouts reached you after missed pings; that's been reset.</p>
+</div>
+</div>
+</div>
+<p style="margin: 0; font-size: 15px; font-weight: 600">Meteor Mite's phone</p>
+</div>
+
+<div style="flex: 1 1 480px; display: flex; flex-direction: column; gap: 10px">
+<div style="background: #FFFFFF; border: 1px solid #DEDBD3; border-radius: 16px; padding: 20px; display: flex; flex-direction: column; gap: 14px">
+<p style="margin: 0; font-size: 13px; font-weight: 600; color: #545B69">Console · Eastgate · Kip</p>
+<div style="display: flex; flex-wrap: wrap; gap: 14px">
+<div style="flex: 1 1 200px; border: 1px solid #DEDBD3; border-left: 0; border-radius: 12px; padding: 16px; background: #FFFBF7">
+<div style="display: flex; justify-content: space-between; align-items: baseline; gap: 8px"><p style="margin: 0; font-weight: 700">Meteor Mite</p><p style="margin: 0; font-size: 13px; font-weight: 700; color: #C2410C">Quiet</p></div>
+<p style="margin: 10px 0 0; font-family: 'Space Grotesk', Inter, sans-serif; font-size: 30px; font-weight: 700">1 <span style="font-size: 15px; font-family: Inter, sans-serif; font-weight: 500; color: #545B69">ping this week · usually ~11</span></p>
+<p style="margin: 8px 0 0; font-size: 14px; color: #3A3F4A; line-height: 1.4">Missed 3 in a row. Asked Mite to confirm on duty.</p>
+<p style="margin: 8px 0 0; font-size: 13px; color: #545B69">Took 6 of their last 10</p>
+</div>
+<div style="flex: 1 1 200px; border: 1px solid #DEDBD3; border-radius: 12px; padding: 16px">
+<div style="display: flex; justify-content: space-between; align-items: baseline; gap: 8px"><p style="margin: 0; font-weight: 700">The Gale</p><p style="margin: 0; font-size: 13px; font-weight: 700; color: #1D4ED8">Busy</p></div>
+<p style="margin: 10px 0 0; font-family: 'Space Grotesk', Inter, sans-serif; font-size: 30px; font-weight: 700">21 <span style="font-size: 15px; font-family: Inter, sans-serif; font-weight: 500; color: #545B69">pings · usually ~13</span></p>
+<p style="margin: 8px 0 0; font-size: 14px; color: #3A3F4A; line-height: 1.4">Covering most of Eastgate this week.</p>
+<p style="margin: 8px 0 0; font-size: 13px; color: #545B69">Took 9 of their last 10</p>
+</div>
+</div>
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px; background: #F6F5F1; border-radius: 10px; padding: 12px 14px; font-size: 14px">
+<span style="width: 10px; height: 10px; border-radius: 50%; background: #1D4ED8"></span>
+<span><strong>Pinging Meteor Mite</strong> · 64s left · next: The Gale</span>
+</div>
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px; background: #FFF4EC; border-radius: 10px; padding: 12px 14px; font-size: 14px; color: #7A2E0B">
+<strong>Heads-up:</strong><span>Meteor Mite is below half their usual pings this week.</span>
+</div>
+</div>
+<p style="margin: 0; font-size: 15px; font-weight: 600; text-align: center">Kip's coverage cards</p>
+</div>
+</div>
+<p style="margin: 0; font-size: 14px; color: #545B69">Screens are illustrations of the proposed design, with example times and counts. Sofia Marino owns the real design.</p>
+
+<div style="overflow-x: auto; background: #FFFFFF; border: 1px solid #DEDBD3; border-radius: 16px">
+<table style="width: 100%; min-width: 640px; border-collapse: collapse; font-size: 16px">
+<thead>
+<tr style="text-align: left; background: #EFEDE7">
+<th scope="col" style="padding: 14px 18px; width: 22%">Moment</th>
+<th scope="col" style="padding: 14px 18px">Today</th>
+<th scope="col" style="padding: 14px 18px">After</th>
+</tr>
+</thead>
+<tbody>
+<sc-for list="{{changes}}" as="c" hint-placeholder-count="8">
+<tr style="border-top: 1px solid #E7E4DC; vertical-align: top">
+<th scope="row" style="padding: 14px 18px; text-align: left; font-weight: 600">{{c.moment}}</th>
+<td style="padding: 14px 18px; color: #545B69">{{c.today}}</td>
+<td style="padding: 14px 18px">{{c.after}}</td>
+</tr>
+</sc-for>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+
+<section style="padding: 80px 24px; border-bottom: 1px solid #DEDBD3">
+<div style="max-width: 1080px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px">
+<p style="margin: 0; font-size: 14px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #545B69">Chapter 5 · How the score works</p>
+<h2 style="margin: 0; font-family: 'Space Grotesk', Inter, sans-serif; font-size: 40px; line-height: 1.15">A score that can't sink just because nobody asked</h2>
+<p style="margin: 0; max-width: 760px; color: #3A3F4A">Today the main way back is taking pings, and a low score means fewer pings. The proposed score only changes when the responder answers.</p>
+<div style="overflow-x: auto; background: #FFFFFF; border: 1px solid #DEDBD3; border-radius: 16px">
+<table style="width: 100%; min-width: 640px; border-collapse: collapse; font-size: 16px">
+<thead>
+<tr style="text-align: left; background: #EFEDE7">
+<th scope="col" style="padding: 14px 18px; width: 24%"></th>
+<th scope="col" style="padding: 14px 18px">Today</th>
+<th scope="col" style="padding: 14px 18px">After (proposed)</th>
+</tr>
+</thead>
+<tbody>
+<sc-for list="{{score}}" as="c" hint-placeholder-count="9">
+<tr style="border-top: 1px solid #E7E4DC; vertical-align: top">
+<th scope="row" style="padding: 14px 18px; text-align: left; font-weight: 600">{{c.k}}</th>
+<td style="padding: 14px 18px; color: #545B69">{{c.today}}</td>
+<td style="padding: 14px 18px">{{c.after}}</td>
+</tr>
+</sc-for>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+
+<section style="padding: 80px 24px; border-bottom: 1px solid #DEDBD3">
+<div style="max-width: 1080px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px">
+<p style="margin: 0; font-size: 14px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #545B69">Chapter 6 · Simulation</p>
+<h2 style="margin: 0; font-family: 'Space Grotesk', Inter, sans-serif; font-size: 40px; line-height: 1.15">Every responder, replayed under each rule</h2>
+<p style="margin: 0; max-width: 820px; color: #3A3F4A">All 1,696 real pings from 29 Jun to 6 Sep, run through each rule. Everyone starts at 0.5. Bars show each responder's score on 6 Sep, from 0 to 1; higher means pinged sooner. The four who went quiet are in orange.</p>
+<div style="overflow-x: auto; background: #FFFFFF; border: 1px solid #DEDBD3; border-radius: 16px">
+<table style="width: 100%; min-width: 820px; border-collapse: collapse; font-size: 15px">
+<thead>
+<tr style="text-align: left; background: #EFEDE7; vertical-align: bottom">
+<th scope="col" style="padding: 12px 16px">Responder</th>
+<th scope="col" style="padding: 12px 10px; text-align: right">Pings/wk before</th>
+<th scope="col" style="padding: 12px 10px; text-align: right">After 4.2</th>
+<th scope="col" style="padding: 12px 16px; width: 20%">4.2 rule<span style="display: block; font-weight: 500; color: #545B69; font-size: 13px">12 Aug 2026</span></th>
+<th scope="col" style="padding: 12px 16px; width: 20%">Today's rule<span style="display: block; font-weight: 500; color: #545B69; font-size: 13px">24 Oct 2026</span></th>
+<th scope="col" style="padding: 12px 16px; width: 20%">After<span style="display: block; font-weight: 500; color: #545B69; font-size: 13px">4.3, proposed</span></th>
+</tr>
+</thead>
+<tbody>
+<sc-for list="{{sim}}" as="r" hint-placeholder-count="16">
+<tr style="border-top: 1px solid #E7E4DC">
+<th scope="row" style="padding: 10px 16px; text-align: left; font-weight: 600; {{r.nameStyle}}">{{r.name}}</th>
+<td style="padding: 10px; text-align: right; font-variant-numeric: tabular-nums">{{r.before}}</td>
+<td style="padding: 10px; text-align: right; font-variant-numeric: tabular-nums">{{r.after}}</td>
+<td style="padding: 10px 16px"><div style="display: flex; align-items: center; gap: 8px"><div style="flex: 1 1 auto; height: 10px; background: #EFEDE7; border-radius: 5px; overflow: hidden"><div style="height: 100%; border-radius: 5px; {{r.b42}}"></div></div><span style="flex: 0 0 34px; text-align: right; font-variant-numeric: tabular-nums">{{r.s42}}</span></div></td>
+<td style="padding: 10px 16px"><div style="display: flex; align-items: center; gap: 8px"><div style="flex: 1 1 auto; height: 10px; background: #EFEDE7; border-radius: 5px; overflow: hidden"><div style="height: 100%; border-radius: 5px; {{r.bToday}}"></div></div><span style="flex: 0 0 34px; text-align: right; font-variant-numeric: tabular-nums">{{r.sToday}}</span></div></td>
+<td style="padding: 10px 16px"><div style="display: flex; align-items: center; gap: 8px"><div style="flex: 1 1 auto; height: 10px; background: #EFEDE7; border-radius: 5px; overflow: hidden"><div style="height: 100%; border-radius: 5px; {{r.bB}}"></div></div><span style="flex: 0 0 34px; text-align: right; font-variant-numeric: tabular-nums">{{r.sB}}</span></div></td>
+</tr>
+</sc-for>
+</tbody>
+</table>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 16px">
+<div style="flex: 1 1 240px; background: #FFFFFF; border: 1px solid #DEDBD3; border-radius: 12px; padding: 20px">
+<p style="margin: 0 0 6px; font-weight: 700">4.2 rule</p>
+<p style="margin: 0; font-size: 16px; color: #3A3F4A">The four quiet responders fall to 0. Everyone else stays between 0.72 and 1.00, though they missed as often (7–9 each).</p>
+</div>
+<div style="flex: 1 1 240px; background: #FFFFFF; border: 1px solid #DEDBD3; border-radius: 12px; padding: 20px">
+<p style="margin: 0 0 6px; font-weight: 700">Today's rule</p>
+<p style="margin: 0; font-size: 16px; color: #3A3F4A">They only climb back to 0.41–0.50, still last in line. That's why their scores were restored by hand on 24 Oct.</p>
+</div>
+<div style="flex: 1 1 240px; background: #FFFFFF; border: 1px solid #DEDBD3; border-radius: 12px; padding: 20px">
+<p style="margin: 0 0 6px; font-weight: 700">After</p>
+<p style="margin: 0; font-size: 16px; color: #3A3F4A">All four land at 0.71–0.76, in with everyone else (0.71–0.82). No manual fix needed.</p>
+</div>
+</div>
+<p style="margin: 0; font-size: 14px; color: #545B69">Trade-off: scores sit closer together, so how often someone says yes counts for less when ranking. Limits: this replays the pings that happened; it doesn't re-run who would have been pinged, which needs Wen's full ranking replay. The new rule uses each responder's last 30 answered pings, blended with a typical 75% when they have only a few.</p>
+</div>
+</section>
+
+<section style="padding: 80px 24px; border-bottom: 1px solid #DEDBD3">
+<div style="max-width: 1080px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px">
+<p style="margin: 0; font-size: 14px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #545B69">Chapter 7 · The question Wen raised years ago</p>
+<h2 style="margin: 0; font-family: 'Space Grotesk', Inter, sans-serif; font-size: 40px; line-height: 1.15">Should a score recover on its own?</h2>
+<p style="margin: 0; max-width: 760px; color: #3A3F4A">Wen Li left a note beside the scoring code in 2019 and nobody came back to it. Both sides of it were right.</p>
+<div style="display: flex; flex-wrap: wrap; gap: 16px">
+<div style="flex: 1 1 280px; background: #FFFFFF; border: 1px solid #DEDBD3; border-radius: 12px; padding: 24px">
+<p style="margin: 0 0 8px; font-size: 13px; text-transform: uppercase; letter-spacing: 0.08em; color: #545B69">For</p>
+<p style="margin: 0">A bad month shouldn't follow someone forever.</p>
+</div>
+<div style="flex: 1 1 280px; background: #FFFFFF; border: 1px solid #DEDBD3; border-radius: 12px; padding: 24px">
+<p style="margin: 0 0 8px; font-size: 13px; text-transform: uppercase; letter-spacing: 0.08em; color: #545B69">Against</p>
+<p style="margin: 0">Someone who has really stopped working shouldn't keep getting pinged.</p>
+</div>
+<div style="flex: 1 1 280px; background: #16181D; color: #F6F5F1; border-radius: 12px; padding: 24px">
+<p style="margin: 0 0 8px; font-size: 13px; text-transform: uppercase; letter-spacing: 0.08em; color: #F59E6B">Our answer: ask the responder</p>
+<p style="margin: 0">Slow to the phone? You recover to your own usual level. Stopped working? You tap "Going off duty". Nobody is marked down silently.</p>
+</div>
+</div>
+</div>
+</section>
+
+<section style="padding: 80px 24px; border-bottom: 1px solid #DEDBD3">
+<div style="max-width: 1080px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px">
+<p style="margin: 0; font-size: 14px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #545B69">Chapter 8 · How we'll know it worked</p>
+<h2 style="margin: 0; font-family: 'Space Grotesk', Inter, sans-serif; font-size: 40px; line-height: 1.15">Back to how it was before 4.2</h2>
+<div style="overflow-x: auto; background: #FFFFFF; border: 1px solid #DEDBD3; border-radius: 16px">
+<table style="width: 100%; min-width: 860px; border-collapse: collapse; font-size: 15px">
+<thead>
+<tr style="text-align: left; background: #EFEDE7; vertical-align: bottom">
+<th scope="col" style="padding: 12px 16px; width: 18%">Measure</th>
+<th scope="col" style="padding: 12px 16px; width: 16%">Before 4.2</th>
+<th scope="col" style="padding: 12px 16px; width: 18%">After 4.2</th>
+<th scope="col" style="padding: 12px 16px">Target</th>
+<th scope="col" style="padding: 12px 16px; width: 13%">Who checks</th>
+</tr>
+</thead>
+<tbody>
+<sc-for list="{{metrics}}" as="m" hint-placeholder-count="8">
+<tr style="border-top: 1px solid #E7E4DC; vertical-align: top">
+<th scope="row" style="padding: 12px 16px; text-align: left; font-weight: 600">{{m.k}}<span style="display: block; margin-top: 4px; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #C2410C">{{m.group}}</span></th>
+<td style="padding: 12px 16px; color: #545B69">{{m.before}}</td>
+<td style="padding: 12px 16px; color: #545B69">{{m.after}}</td>
+<td style="padding: 12px 16px; font-weight: 500">{{m.target}}</td>
+<td style="padding: 12px 16px; color: #545B69">{{m.who}}</td>
+</tr>
+</sc-for>
+</tbody>
+</table>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 16px">
+<div style="flex: 1 1 320px; background: #FFF4EC; border: 1px solid #F3C6A8; border-radius: 12px; padding: 18px 20px">
+<p style="margin: 0; font-size: 16px; color: #7A2E0B"><strong>Read acceptance with the rest.</strong> After 4.2 it recovered to 73% while four responders were starved.</p>
+</div>
+<div style="flex: 1 1 320px; background: #FFFFFF; border: 1px solid #DEDBD3; border-radius: 12px; padding: 18px 20px">
+<p style="margin: 0; font-size: 16px; color: #3A3F4A"><strong>Why check satisfaction directly.</strong> Some of the handlers hit hardest never file tickets (Dot, Kip and Halloran filed none), so tickets undercount the problem.</p>
+</div>
+</div>
+</div>
+</section>
+
+<footer style="padding: 80px 24px 96px">
+<div style="max-width: 1080px; margin: 0 auto; display: flex; flex-wrap: wrap; gap: 32px">
+<div style="flex: 1 1 380px; display: flex; flex-direction: column; gap: 12px">
+<h2 style="margin: 0; font-family: 'Space Grotesk', Inter, sans-serif; font-size: 28px">Not in this brief</h2>
+<p style="margin: 0; color: #3A3F4A"><strong>Dark mode for the console.</strong> Kip's top request, but it belongs in the console redesign.</p>
+<p style="margin: 0; color: #3A3F4A"><strong>How much distance counts in ranking.</strong> 4.2 changed that too, and it needs its own review.</p>
+</div>
+<div style="flex: 1 1 380px; background: #16181D; color: #F6F5F1; border-radius: 16px; padding: 28px; display: flex; flex-direction: column; gap: 10px">
+<p style="margin: 0; font-size: 13px; text-transform: uppercase; letter-spacing: 0.08em; color: #F59E6B">Next step</p>
+<p style="margin: 0; font-family: 'Space Grotesk', Inter, sans-serif; font-size: 24px; font-weight: 600; line-height: 1.3">A clickable prototype of Mite's phone and Kip's console, before and after.</p>
+<p style="margin: 0; font-size: 15px; color: #B7BCC7">Cc Wen Li, Marcus Oyelaran, Sofia Marino</p>
+</div>
+</div>
+</footer>
+
+</main>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":7900}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const labels = ['29 Jun','6 Jul','13 Jul','20 Jul','27 Jul','3 Aug','10 Aug','17 Aug','24 Aug','31 Aug'];
+    const mite = [11,12,10,11,12,11,10,4,2,1];
+    const gale = [13,12,13,14,13,13,15,17,20,21];
+    const h = (v) => 'height: ' + Math.round(v / 21 * 170) + 'px';
+    const weeks = labels.map((label, i) => ({
+      label, mite: mite[i], gale: gale[i], miteH: h(mite[i]), galeH: h(gale[i]),
+      tag: i === 6 ? '4.2' : '',
+      bg: i === 6 ? 'background: #FFF4EC; border-radius: 6px 6px 0 0' : ''
+    }));
+    const loop = [
+      { n: '1', title: 'Less time to answer', body: 'Ping wait cut from 90s to 60s.' },
+      { n: '2', title: 'More missed pings', body: 'Alerts noticed a few seconds too late.' },
+      { n: '3', title: 'Each miss counted as a "no"', body: 'Same penalty as turning a ping down.' },
+      { n: '4', title: 'Lower on the list', body: 'The responder is asked later, or not at all.' },
+      { n: '5', title: 'Fewer pings', body: 'No pings means no way to earn points back.' }
+    ];
+    const changes = [
+      { moment: 'The ping', today: 'Same "bing" for every responder; hard to tell who it’s for', after: 'Shows who, where and what’s needed, with a countdown and its own sound per responder' },
+      { moment: 'A missed ping', today: 'Silently counts against you', after: '"You missed a callout. It doesn’t count against you."' },
+      { moment: 'Several misses in a row', today: 'You drop down the list without being told', after: 'Phone asks "Still on duty?" with I’m here or Going off duty' },
+      { moment: 'A quiet week', today: 'No explanation', after: '"You’ve had 4 pings this week, you usually get about 11. Here’s why."' },
+      { moment: 'Answered too late', today: 'The callout is gone', after: 'If nobody else took it, you get one more chance' },
+      { moment: 'Kip’s console card', today: 'Ping count only', after: '"1 ping this week (usually ~11). Missed 3 in a row, asked Mite if still on duty."' },
+      { moment: 'While a ping is out', today: 'Kip can’t see it', after: '"Pinging Meteor Mite, 64s left, next: The Gale"' },
+      { moment: 'A big drop', today: 'Kip finds out from the responder', after: 'Kip gets a heads-up when a responder falls below half their usual pings' }
+    ];
+    const score = [
+      { k: 'Release', today: 'Routing fix, 24 Oct 2026 (shipped as a fix after 4.2, no version number of its own)', after: '4.3, date to be set by Wen and Marcus' },
+      { k: 'What the score is', today: 'A running points total', after: 'The share of answered pings the responder took, over their last ~30 answers' },
+      { k: 'Responder says yes', today: '+0.08 points', after: 'Counts as a yes in the share' },
+      { k: 'Responder says no', today: '−0.12 points', after: 'Counts as a no in the share' },
+      { k: 'One missed ping', today: 'No effect', after: 'No effect: misses are left out of the score' },
+      { k: '3 or more misses in a row', today: '−0.12 points for each one', after: 'No effect on the score. Phone asks "Still on duty?"' },
+      { k: 'Getting back after a bad patch', today: 'Drifts up 0.02 a day, but only to 0.5, below everyone else (0.72+)', after: 'Can’t fall from not being pinged. Few recent pings means it stays near their usual level' },
+      { k: 'What Kip sees', today: 'Nothing', after: '"Took 6 of their last 10" (Meteor Mite’s real figure)' },
+      { k: 'Ping wait', today: '90 seconds', after: '90 seconds (unchanged)' }
+    ];
+    const raw = [
+      ['Vesper',14,5,0.00,0.50,0.76,true],
+      ['The Undertow',12,4,0.00,0.41,0.74,true],
+      ['Farlight',12,3,0.00,0.50,0.71,true],
+      ['Meteor Mite',11,4,0.00,0.50,0.71,true],
+      ['Ironvale',8,10,0.72,0.85,0.82,false],
+      ['Sgt. Falkirk',10,14,0.76,0.85,0.82,false],
+      ['Stormwrack',13,17,0.76,0.87,0.82,false],
+      ['The Drift',6,8,0.84,0.78,0.82,false],
+      ['Nightwell',15,19,0.88,0.99,0.74,false],
+      ['Captain Vantage',12,16,0.92,1.00,0.79,false],
+      ['The Longcast',7,9,0.96,0.93,0.79,false],
+      ['The Gale',13,19,0.96,0.93,0.79,false],
+      ['Cindermark',9,11,0.96,0.99,0.79,false],
+      ['Sgt. Bulwark',9,10,1.00,0.99,0.79,false],
+      ['Corporal Ashgrove',10,8,1.00,0.97,0.76,false],
+      ['Halfmoon',11,9,1.00,0.97,0.74,false]
+    ];
+    const bar = (v, q) => 'width: ' + Math.max(v * 100, 1.5) + '%; background: ' + (q ? '#C2410C' : '#7A8396');
+    const sim = raw.map(([name, before, after, a, b, c, q]) => ({
+      name, before, after,
+      s42: a.toFixed(2), sToday: b.toFixed(2), sB: c.toFixed(2),
+      b42: bar(a, q), bToday: bar(b, q), bB: bar(c, q),
+      nameStyle: q ? 'color: #C2410C' : ''
+    }));
+    const metrics = [
+      { group: 'Fairness', k: 'Pings for Meteor Mite and The Gale', before: '~11 and ~13 a week', after: '1 and 21 (week of 31 Aug)', target: 'Both back to ~11–13', who: 'Ravi Menon' },
+      { group: 'Fairness', k: 'Responders left out', before: 'None', after: '4 cut off', target: 'No available responder goes a week without a ping', who: 'Ravi Menon' },
+      { group: 'Misses', k: 'Missed pings', before: '2–6 a week', after: '21–38 a week', target: '2–6 a week', who: 'Ravi Menon' },
+      { group: 'Acceptance', k: 'Acceptance rate', before: '75–78%', after: '54% in release week', target: '75–78%, read alongside the rows above', who: 'Ravi Menon' },
+      { group: 'Backlog', k: 'Callouts nobody took', before: '5.5% of callouts', after: '11.1%', target: 'About 5%', who: 'Ravi Menon' },
+      { group: 'Backlog', k: 'Open routing tickets', before: 'All pre-4.2 tickets closed', after: '45 routing tickets open', target: 'All 45 answered and closed; new tickets back to 5–8 a week', who: 'Nadia Hoffmann' },
+      { group: 'Satisfaction', k: 'Responders', before: 'No measure today', after: '“Phone never goes off” was ⅔ of tickets', target: 'Those tickets stop. One in-app question after two weeks: “Do you know why you got the pings you did this week?” Baseline set on first run', who: 'Sofia Marino' },
+      { group: 'Satisfaction', k: 'Handlers', before: 'No measure today', after: '3 of 4 interviewed raised missed alerts', target: 'Re-interview Dot, Ambrose, Halloran and Kip: each can say why a card is quiet without asking us', who: 'Sofia Marino' }
+    ];
+    return { weeks, loop, changes, score, sim, metrics };
+  }
+}
+</script>
+</body>
+</html>

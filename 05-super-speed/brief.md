@@ -1,14 +1,16 @@
 # Brief: when a responder goes quiet, nobody should have to guess why
 
 For Helen Achebe, Director of Product. From the Dispatch PM. 7 Nov 2026.
+**Owner: Himanshu Bajaj, PM for Rook Dispatch.**
 Cc Wen Li, Marcus Oyelaran, Sofia Marino.
 
 ## In short
 - After 4.2, some responders stopped getting pings. Nobody could see why: not the responder, not their handler.
 - The number has already been fixed (since 24 Oct the ping wait is back to 90 seconds). That alone doesn't fix what people experience.
-- **This brief proposes eight small changes** to the phone app and console, so people can see what's happening and why.
+- **This brief proposes two things:** eight small changes to the phone app and console, so people can see what's happening and why;
+  and a new way of working out each responder's score in 4.3, so a missed ping or a quiet week can't push someone off the list.
 - **A replay of every real callout backs it up:** keeping the wait at 90 seconds restores acceptance (64% → 77%), and the new score protects the responders who went quiet.
-- **What I need from you:** OK to have Sofia design the changes and Wen scope them. A clickable prototype is ready to walk through (`prototype.html`).
+- **What I need from you:** OK to have Sofia design the eight changes, and Wen scope them and the new score for 4.3. A clickable prototype is ready to walk through (`prototype.html`).
 
 ## One example: Meteor Mite and their handler Kip
 Kip looks after two responders in the same part of the city, Meteor Mite and The Gale.
